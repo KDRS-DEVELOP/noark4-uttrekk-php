@@ -1,0 +1,90 @@
+<?php
+
+require_once 'models/Avskrm.php';
+require_once 'models/Noark4Base.php';
+
+class AvskrmDAO extends Noark4Base {
+		
+	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
+                parent::__construct (Constants::getXMLFilename('AVSKRM'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
+		$this->selectQuery = "select AVSKRMET, BESKRIVELSE, AVSKRTYPE, BESVART from " . $SRC_TABLE_NAME . "";
+		$this->logger=$logger;
+	} 
+	
+	function processTable () {
+
+		$avskrm = new Avskrm();
+		$avskrm->AV_KODE = 'SA';
+		$avskrm->AV_BETEGN = 'Saken Avsluttet';
+		$this->logger->log($this->XMLfilename, "'SA/Saken Avsluttet' pair missing. Added here", Constants::LOG_INFO);
+		$this->infoIssued = true;
+		$this->writeToDestination($avskrm);
+
+		$avskrm  = null;
+
+		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
+
+		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
+				$avskrm = new Avskrm();
+				$avskrm->AV_KODE = $result['AVSKRMET'];
+				$avskrm->AV_BETEGN = $result['BESKRIVELSE'];
+
+
+				if (strcmp($result['AVSKRTYPE'], "A") == 0) {
+					$avskrm->AV_MIDLERTID = "0";
+					$this->logger->log($this->XMLfilename, "Assuming AV_MIDLERTID (AVSKRTYPE) value A is 0", Constants::LOG_INFO);
+					$this->infoIssued = true; 
+				}
+				else if (strcmp($result['AVSKRTYPE'], "F") == 0) {
+					$avskrm->AV_MIDLERTID = "1";
+					$this->logger->log($this->XMLfilename, "Assuming AV_MIDLERTID (AVSKRTYPE) value F is 1", Constants::LOG_INFO);
+					$this->infoIssued = true; 
+				}
+
+				if (is_null($result['BESVART'])) {	
+					$avskrm->AV_BESVART = $result['BESVART'];
+					$this->logger->log($this->XMLfilename, "Assuming AV_BESVART (BESVART) null value is 0", Constants::LOG_INFO);
+					$this->infoIssued = true;
+				}
+				else {
+					$avskrm->AV_BESVART = $result['BESVART'];
+				}
+
+				$this->writeToDestination($avskrm);
+		}
+		$this->srcBase->endQuery($this->selectQuery);
+	}
+			
+	function writeToDestination($data) {
+		
+		$sqlInsertStatement = "INSERT INTO AVSKRM (AV_KODE, AV_BETEGN, AV_MIDLERTID, AV_BESVART) VALUES (";
+
+		$sqlInsertStatement .= "'" . $data->AV_KODE . "', ";
+		$sqlInsertStatement .= "'" . $data-> AV_BETEGN. "', ";			
+		$sqlInsertStatement .= "'" . $data->AV_MIDLERTID . "', ";
+		$sqlInsertStatement .= "'" . $data->AV_BESVART . "'";			
+	
+		$sqlInsertStatement.= ");";
+		
+		$this->uttrekksBase->executeStatement($sqlInsertStatement);
+    }
+	
+  	function createXML($extractor) {    
+		$sqlQuery = "SELECT * FROM AVSKRM";
+		$mapping = array ('idColumn' => 'av_kode', 
+					'rootTag' => 'AVSKRMAATE.TAB',	
+						'rowTag' => 'AVSKRMAATE',
+							'encoder' => 'utf8_decode',
+								'elements' => array(
+									'AV.KODE' => 'av_kode',
+									'AV.BETEGN' => 'av_betegn',
+									'AV.MIDLERTID' => 'av_midlertid',
+									'AV.BESVART' => 'av_besvart'
+									) 
+							) ;
+			
+		$extractor->extract($sqlQuery, $mapping, $this->XMLfilename, "file");
+    	
+    }    
+ }
+			
