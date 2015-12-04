@@ -21,7 +21,7 @@ class Logger {
 	}
 
 	public function log ($table, $description, $type) {
-		$str = "[" . /* date("", mktime()) . */ "(" . $type . ", " . $table . ")]" . $description . "\n";
+		$str = "[" . date("", mktime()) . "(" . $type . ", " . $table . ")]" . $description . "\n";
 		fwrite($this->logFile, $str);
 		flush($this->logFile);
 

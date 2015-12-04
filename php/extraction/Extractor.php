@@ -99,7 +99,29 @@ class Extractor {
 		$colMapping = $mapping['elements'];
 		$xmlHeader = "<?xml version=\"1.0\" encoding=\"" . Constants::XML_ENCODING . "\"?>" . Constants::NEWLINE;
 		$tabInfo = $mapping['rootTag'];
-		$dtdInfo = $mapping['rowTag'] . ".DTD";
+		
+//		if (isset($mapping['fileName']) == true) {
+//			$dtdInfo = $mapping['fileName'] . ".DTD";
+//		}
+//		else {
+		// Was done this way as at the end I don't have time to fix code properly
+
+		$position = strpos($xmlFilename, ".");
+		$dtdName =  substr($xmlFilename, 0, $position);
+		$dtdInfo = $dtdName . ".DTD";
+
+		if (strcmp($dtdName, 'ADRADMENH') == 0) {
+			$dtdInfo = "ADRADMEN.DTD";
+		}
+
+		//if (strcmp($dtdName, 'ADRADMENH') == 0) {
+		//	$dtdInfo = "UTVMDOK.DTD";
+		//}
+
+
+			//$dtdInfo = $mapping['rowTag'] . ".DTD";
+//		}
+
 		$docType = "<!DOCTYPE " . $tabInfo . " SYSTEM \"" . $dtdInfo . "\">" . Constants::NEWLINE;
 
 		$rootTag = "<" . $mapping['rootTag'] . " VERSJON=\"1.0\"" . ">" . Constants::NEWLINE; 

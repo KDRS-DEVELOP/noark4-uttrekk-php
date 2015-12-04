@@ -44,8 +44,8 @@ class BskodeDAO extends Noark4Base {
 						'rowTag' => 'BSKODE',
 							'encoder' => 'utf8_decode',
 								'elements' => array(
-									'BS.KODE' => 'bk_kode',
-									'BS.BETEGN' => 'bk_betegn'
+									'BK.KODE' => 'bk_kode',
+									'BK.BETEGN' => 'bk_betegn'
 									) 
 							) ;
 			

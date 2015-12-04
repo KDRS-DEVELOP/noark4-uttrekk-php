@@ -37,8 +37,8 @@ class ArkivPeriodeDAO extends Noark4Base {
 				$arkivper->AP_FRADATO = Utility::fixDateFormat($result['FRADATO']);
 
 				if (isset($result['TILDATO']) == false) {
-					$arkivper->AP_TILDATO = Constants::DATE_AUTO_END;
-					$this->logger->log($this->XMLfilename, "AP_TILDATO is null for AP_ARKIV(" . $arkivper->AP_ARKIV . "). Setting it to " . Constants::DATE_AUTO_END, Constants::LOG_WARNING);
+					$arkivper->AP_TILDATO = Utility::fixDateFormat(Constants::DATE_AUTO_END);
+					$this->logger->log($this->XMLfilename, "AP_TILDATO is null for AP_ARKIV(" . $arkivper->AP_ARKIV . "). Setting it to " . Utility::fixDateFormat(Constants::DATE_AUTO_END), Constants::LOG_WARNING);
 					$this->warningIssued = true;
 
 				} else {
@@ -52,11 +52,10 @@ class ArkivPeriodeDAO extends Noark4Base {
 	
 	function writeToDestination($data) {		
 		
-		$sqlInsertStatement = "INSERT INTO ARKIVPER (AP_ARKIV, AP_PERIODE, AP_STATUS, AP_FRADATO, AP_TILDATO, AP_MERKNAD) VALUES (";
+		$sqlInsertStatement = "INSERT INTO ARKIVPER (AP_ARKIV, AP_PERIODE, AP_FRADATO, AP_TILDATO, AP_MERKNAD) VALUES (";
 
 		$sqlInsertStatement .= "'" . $data->AP_ARKIV . "', ";
 		$sqlInsertStatement .= "'" . $data->AP_PERIODE . "', ";
-		$sqlInsertStatement .= "'" . $data->AP_STATUS . "', ";
 		$sqlInsertStatement .= "'" . $data->AP_FRADATO . "', ";
 		$sqlInsertStatement .= "'" . $data->AP_TILDATO . "', ";
 		$sqlInsertStatement .= "'" . $data->AP_MERKNAD . "'";			
@@ -76,7 +75,6 @@ class ArkivPeriodeDAO extends Noark4Base {
 							'elements' => array(
 								'AP.ARKIV' => 'ap_arkiv',
 								'AP.PERIODE' => 'ap_periode',
-								'AP.STATUS' => 'ap_status',
 								'AP.FRADATO' => 'ap_fradato',
 								'AP.TILDATO' => 'ap_tildato',
 								'AP.MERKNAD' => 'ap_merknad'

@@ -185,7 +185,7 @@
 	$noark4DatabaseStruktur = new Noark4DatabaseStruktur();
 
 	// Temporary commented out as it takes to long to rebuild everything
-			
+			/*
 	// Noe administrativt arbeid først, slett databasen om den eksisterer, lag en ny tom en og lag alle tabellene
 	echo "Sletter MySQL midlertidig Noark 4 base. Resultatet er (";
 	$val = $uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->deleteDatabaseStatement($uttrekk_db_database));
@@ -195,14 +195,10 @@
 	echo ($val == true  ? 'OK' : 'Feil' ) . ");\n";
 	
 	$uttrekkMySQLBase->setDefaultDatabase();
-	
-	
-	$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->deleteDatabaseStatement($uttrekk_db_database));
-	$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createDatabaseStatement($uttrekk_db_database));
-
+*/
 	$uttrekkMySQLBase->setDefaultDatabase();
 	
-	createNoark4DBStructure ($uttrekkMySQLBase, $noark4DatabaseStruktur);
+	//createNoark4DBStructure ($uttrekkMySQLBase, $noark4DatabaseStruktur);
 	
 
 	
@@ -220,17 +216,17 @@
 
 
 
-//	$tablesToTruncate = array(/*'DOKBESK', 'DOKLINK', 'DOKVERS', 'JOURNPST',*/ 'POLSAKG', 'UTVALG', 'UTVMEDL', 'UTVMOTEDOK', 'UTVMOTE', 'UTVSAK', 'UTVBEH', 'UTVBEHDO');
+	$tablesToTruncate = array('DOKBESK', 'DOKLINK', 'DOKVERS', 'JOURNPST', 'MERKNAD'/* 'POLSAKG', 'UTVALG', 'UTVMEDL', 'UTVMOTEDOK', 'UTVMOTE', 'UTVSAK', 'UTVBEH', 'UTVBEHDO'*/);
 
 
-	//foreach ($tablesToTruncate as $table) {
-	//	$SQLStatement = "TRUNCATE " . $table . "; ";
-	//	$uttrekkMySQLBase->executeStatement($SQLStatement);
-	//	echo $SQLStatement . "\n";
-	//}
+	foreach ($tablesToTruncate as $table) {
+		$SQLStatement = "TRUNCATE " . $table . "; ";
+		$uttrekkMySQLBase->executeStatement($SQLStatement);
+		echo $SQLStatement . "\n";
+	}
 
 
-	
+	/*
 	$tgInfoDAO = handleTGINFO($srcBase, $uttrekkMySQLBase, $table_names['TGINFO_TABLE'], $logger);
 	$tgKodeDAO = handleTGKODE($srcBase, $uttrekkMySQLBase, $table_names['TGKODE_TABLE'], $logger);
 	$tgHjemDAO = handleTGHJEM($srcBase, $uttrekkMySQLBase, $table_names['TGHJEM_TABLE'], $logger);
@@ -280,7 +276,7 @@
 					new MerknadDAO($srcBase, $uttrekkMySQLBase, $table_names['MERKNAD_TABLE'], $logger));
 	
 	$klassDAO = handleKLASS($srcBase, $uttrekkMySQLBase, $table_names['KLASS_TABLE'], $logger);
- 
+ */
 	$merknadDAO = handleMERKNAD($srcBase, $uttrekkMySQLBase, $table_names['MERKNAD_TABLE'], $logger);
 
 	$journPstDAO = handleJOURNPST($srcBase, $uttrekkMySQLBase, $table_names['JOURNPOST_TABLE'], $logger, $merknadDAO, $kommuneName);
@@ -1591,7 +1587,7 @@
 		echo "\t handling UTDOKTYPE ... ";
 		$logger->log("UTDOKTYPE.XML", "Started processing UTDOKTYPE(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
-		$utvDokTypeDAO = new UtDokTypDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
+		$utvDokTypeDAO = new UtvDokTypeDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
 		$utvDokTypeDAO->processTable();
 		$issues = $utvDokTypeDAO->getIssues();
 

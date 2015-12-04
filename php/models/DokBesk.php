@@ -5,6 +5,7 @@ class DokBesk  {
 	var $DB_KATEGORI;
 	var $DB_TITTEL;	
 	var $DB_PAPIR;	
+	var $DB_LOKPAPIR;
 	var $DB_STATUS;
 	var $DB_UTARBAV;	
 	var $DB_TGKODE;

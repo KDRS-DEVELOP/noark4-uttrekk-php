@@ -7,7 +7,7 @@ class KlassDAO  extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('KLASS'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
-		$this->selectQuery = "select JOURAARNR, U1, EKODE1, EKODE2, EKODE3, FELLESK, FAGK, TILLEGSK from " . $SRC_TABLE_NAME . "";
+		$this->selectQuery = "select JOURAARNR, U1, EKODE1, EKODE2, EKODE3, FELLESK, FAGK, TILLEGSK, OTYPE, OKODE1 from " . $SRC_TABLE_NAME . "";
 	} 
 	
 	
@@ -18,38 +18,58 @@ class KlassDAO  extends Noark4Base {
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
 
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
-			
-			if ($result['EKODE1'] != null) {
+	
 				$klass = new Klass();
+			if (isset($result['U1']) == false) {
+				$klass->KL_U1 = '0';
+				$this->logger->log($this->XMLfilename, "For KL_SAID (" . $klass->KL_SAID  . "), KL_U1 is null. Seeting it to (" . $klass->KL_U1. ")", Constants::LOG_WARNING);
+
+			} else {
+				$klass->KL_U1 = $result['U1'];
+			}		
+
+			if (isset($result['OKODE1']) == true) {
+
+				$klass->KL_SAID = $result['JOURAARNR'];
+				$klass->KL_SORT = '1';
+				$klass->KL_ORDNPRI = $result['OTYPE'];;
+				$klass->KL_ORDNVER = $result['OKODE1'];
+//				$klass->KL_U1 = $result['U1'];				
+				$this->writeToDestination($klass);
+			}
+			if (isset($result['EKODE1']) == true) {
+//				$klass = new Klass();
 				$klass->KL_SAID = $result['JOURAARNR'];
 				$klass->KL_SORT = '1';
 				$klass->KL_ORDNPRI = 'A1';
 				$klass->KL_ORDNVER = $result['EKODE1'];
-				$klass->KL_U1 = $result['U1'];
+				//$klass->KL_U1 = $result['U1'];
 				
 				$this->writeToDestination($klass);
 			}
-			if ($result['EKODE2'] != null) {
-				$klass = new Klass();
+			if (isset($result['EKODE2']) == true) {
+//				$klass = new Klass();
 				$klass->KL_SAID = $result['JOURAARNR'];
 				$klass->KL_SORT = '1';
 				$klass->KL_ORDNPRI = 'A2';
 				$klass->KL_ORDNVER = $result['EKODE2'];
-				$klass->KL_U1 = $result['U1'];
+				//$klass->KL_U1 = $result['U1'];
 				
 				$this->writeToDestination($klass);
 			}
-			if ($result['EKODE3'] != null) {
-				$klass = new Klass();
+			if (isset($result['EKODE3']) == true) {
+//				$klass = new Klass();
 				$klass->KL_SAID = $result['JOURAARNR'];
 				$klass->KL_SORT = '1';
 				$klass->KL_ORDNPRI = 'FA';
 				$klass->KL_ORDNVER = $result['EKODE2'];
-				$klass->KL_U1 = $result['U1'];
+				//$klass->KL_U1 = $result['U1'];
 				
 				$this->writeToDestination($klass);
 			}
 			
+
+	
 			
 		}
 		$this->srcBase->endQuery($this->selectQuery);	
@@ -62,7 +82,7 @@ class KlassDAO  extends Noark4Base {
 		$sqlInsertStatement .= "'" . $data->KL_SAID . "', ";
 		$sqlInsertStatement .= "'" . $data->KL_SORT . "', ";
 		$sqlInsertStatement .= "'" . $data->KL_ORDNPRI . "', ";
-		$sqlInsertStatement .= "'" . $data->KL_ORDNVER . "', ";
+		$sqlInsertStatement .= "'" . mysql_real_escape_string($data->KL_ORDNVER) . "', ";
 		$sqlInsertStatement .= "'" . $data->KL_U1 . "'";
 		
 		$sqlInsertStatement.= ");";

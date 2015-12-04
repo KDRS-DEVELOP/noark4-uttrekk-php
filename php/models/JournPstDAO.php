@@ -1,4 +1,4 @@
-<?php
+// <?php
 
 require_once 'models/JournPst.php';
 require_once 'models/Noark4Base.php';
@@ -23,7 +23,7 @@ class JournPstDAO extends Noark4Base {
 		$dokLinkDAO = new DokLinkDAO($this->srcBase, $this->uttrekksBase, Constants::getXMLFilename('JOURNPST'), $this->kommuneName, $this->logger);
 
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
-				$person = new JournPst();
+				$journPst = new JournPst();
 
 // 				TODO : Do I ned this??
 //				if (substr($noarkJP->JP_ID, 0 , 2) > 30)
@@ -43,19 +43,52 @@ class JournPstDAO extends Noark4Base {
 //					$journPst->JP_SAID = "20" . $result['JOURAARNR'];
 
 				$journPst->JP_JDATO = Utility::fixDateFormat($result['REGDATO']);
-				$journPst->JP_NDOKTYPE = $result['TYPE'];
+
+				if (isset($result['TYPE']) == true) {
+					$journPst->JP_NDOKTYPE = $result['TYPE'];
+				} else {
+					$journPst->JP_NDOKTYPE = Constants::DOKTYPE_IKKE_ANNGITT;
+					$this->logger->log($this->XMLfilename, "JOURNALPOST JP_ID (" . $journPst->JP_ID . ") has null for JP.NDOKTYPE. Setting JP.NDOKTYPE to IA which stands for IKKE ANGITT. ", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+
+				}
+
+
 				$journPst->JP_DOKDATO = $result['DATERT'];
 				$journPst->JP_UDATERT = 0; // $result['']; // TODO, why 0
 
 				if (strcmp($result['STATUS'], '?') == 0) {
 					$this->logger->log($this->XMLfilename, "JOURNALPOST JP_ID (" . $journPst->JP_ID . ") has status (" . $result['STATUS'] . ") Setting status to AVSLUTTET ", Constants::LOG_WARNING);
 					$this->warningIssued = true;
+					$journPst->JP_STATUS = 'A';
 				}
 				else {
 					$journPst->JP_STATUS = $result['STATUS'];
 				}
+
 				$journPst->JP_INNHOLD = mysql_real_escape_string($result['INNH1']) . mysql_real_escape_string($result['INNH2']);
-				$journPst->JP_U1 = $result['U1'];
+
+				if ( isset($result['INNH1']) == false && isset($result['INNH2']) == false) {
+					$journPst->JP_INNHOLD = "Ingen beskrivelse tigjenlig i kilde databasen";
+					$this->logger->log($this->XMLfilename, "JOURNALPOST JP_ID (" . $journPst->JP_ID . ") is missing JP_INNHOLD. Set to 'Ingen beskrivelse tigjenlig i kilde databasen'", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
+
+				// Check field isn't just whitespave
+				if (strlen($journPst->JP_INNHOLD) > 0 && strlen(trim($journPst->JP_INNHOLD)) == 0) {
+					$journPst->JP_INNHOLD = "Mangler innhold fra ESA. Bare mellomrom var innhold";
+
+					$this->logger->log($this->XMLfilename, "JOURNALPOST JP_ID (" . $journPst->JP_ID . ") JP_INNHOLD only contains whitespace. Set to 'Mangler innhold fra ESA. Bare mellomrom var innhold'", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
+
+				if (isset($result['U1']) == true) {
+					$journPst->JP_U1 = $result['U1'];
+				} 
+				else {
+					$journPst->JP_U1 = '0';
+				}
+
 				$journPst->JP_AVSKDATO = Utility::fixDateFormat($result['AVSKRDATO']);
 				$journPst->JP_FORFDATO = Utility::fixDateFormat($result['SVARFRIST']);
 				$journPst->JP_UOFF = $result['HJEMMEL'];
@@ -97,7 +130,7 @@ class JournPstDAO extends Noark4Base {
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO JOURNPST (JP_ID, JP_JAAR, JP_SEKNR, JP_SAID, JP_JPOSTNR,  JP_JDATO, JP_NDOKTYPE, JP_DOKDATO, JP_STATUS, JP_INNHOLD, JP_U1, JP_AVSKDATO, JP_FORFDATO, JP_UOFF, JP_OVDATO, JP_AGDATO, JP_PAPIR, JP_ANTVED) VALUES (";
+		$sqlInsertStatement = "INSERT INTO JOURNPST (JP_ID, JP_JAAR, JP_SEKNR, JP_SAID, JP_JPOSTNR,  JP_JDATO, JP_NDOKTYPE, JP_UDATERT, JP_DOKDATO, JP_STATUS, JP_INNHOLD, JP_U1, JP_AVSKDATO, JP_FORFDATO, JP_UOFF, JP_OVDATO, JP_AGDATO, JP_PAPIR, JP_ANTVED) VALUES (";
 	
 		$sqlInsertStatement .= "'" . $data->JP_ID . "', ";
 		$sqlInsertStatement .= "'" . $data->JP_JAAR . "', ";
@@ -106,6 +139,7 @@ class JournPstDAO extends Noark4Base {
 		$sqlInsertStatement .= "'" . $data->JP_JPOSTNR . "', ";
 		$sqlInsertStatement .= "'" . $data->JP_JDATO . "', ";
 		$sqlInsertStatement .= "'" . $data->JP_NDOKTYPE . "', ";
+		$sqlInsertStatement .= "'" . $data->JP_UDATERT . "', ";
 		$sqlInsertStatement .= "'" . $data->JP_DOKDATO . "', ";
 		$sqlInsertStatement .= "'" . $data->JP_STATUS . "', ";
 		$sqlInsertStatement .= "'" . $data->JP_INNHOLD . "', ";
@@ -152,7 +186,7 @@ class JournPstDAO extends Noark4Base {
 							'JP.JAAR' => 'jp_jaar',
 							'JP.SEKNR' => 'jp_seknr',
 							'JP.SAID' => 'jp_said',
-							'JP.POSTNR' => 'jp_jpostnr',
+							'JP.JPOSTNR' => 'jp_jpostnr',
 							'JP.JDATO' => 'jp_jdato',
 							'JP.NDOKTYPE' => 'jp_ndoktype',
 							'JP.UDATERT' => 'jp_udatert',

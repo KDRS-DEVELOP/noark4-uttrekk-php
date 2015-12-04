@@ -27,7 +27,7 @@ class DokVersDAO extends Noark4Base {
  			$this->warningIssued = true;
 		}	
 
-
+ 
 		$this->writeToDestination($dokVers);
 	}
 
@@ -53,6 +53,9 @@ class DokVersDAO extends Noark4Base {
 
 		$sqlInsertStatement.= ");";
 
+
+//		echo $sqlInsertStatement . "\n";
+
 		$this->uttrekksBase->printErrorIfFKFail = false;
 
 		if ($this->uttrekksBase->executeStatement($sqlInsertStatement) == false) {
@@ -62,16 +65,17 @@ class DokVersDAO extends Noark4Base {
 				$errorString = mysql_error();
 				// Missing refernece to NOARKSAK. Probably UTGÅR - ingnored and logged as ERROR
 				if (strpos($errorString, "PERSON") !== FALSE) {
-					$this->logger->log($this->XMLfilename, "Missing PERSON with ID VE.REGAV(" . $data->VE_REGAV . ") for DOKID (" . $data->VE_DOKID . "). PERSON identified in VE_REGAV set to NOUSER Value (" . Constants::INGENBRUKER_ID . ")", Constants::LOG_ERROR);
+					$this->logger->log($this->XMLfilename, "Missing PERSON with ID VE.REGAV(" . $data->VE_REGAV . ") for DOKID (" . $data->VE_DOKID . "). PERSON identified in VE_REGAV set to NOUSER Value (" . Constants::INGENBRUKER_ID . ")", Constants::LOG_WARNING);
 
-					$this->errorIssued = true;
+					$this->warningIssued = true;
 
 					$data->VE_REGAV = Constants::INGENBRUKER_ID;					
 					$this->writeToDestination($data);
 				}			
 				else {
+				     //die;
 					echo "DOKVERS proces error " . $errorString;
-					die;
+
 				}
 			}
 		}
@@ -83,7 +87,7 @@ class DokVersDAO extends Noark4Base {
 		$sqlQuery = "SELECT * FROM DOKVERS";
 		$mapping = array ('idColumn' => 've_dokid', 
 					'rootTag' => 'DOKVERS.TAB',	
-						'rowTag' => 'DOKVERS',
+						'rowTag' => 'DOKVERSJON',
 							'encoder' => 'utf8_decode',
 								'elements' => array(
 										'VE.DOKID' => 've_dokid',

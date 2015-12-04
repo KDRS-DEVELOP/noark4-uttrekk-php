@@ -30,6 +30,4 @@ class JournPst {
 	var $JP_PAPIR;
 	var $JP_TLKODE;
 	var $JP_ANTVED;
-	var $JP_UTLDATO;
-	var $JP_UTLTIL;
 }

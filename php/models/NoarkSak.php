@@ -25,8 +25,6 @@ class NoarkSak {
 		var $SA_KASSDATO;
 		var $SA_PROSJEKT;
 		var $SA_PRES;
-		var $SA_FRARKDEL;
-		var $SA_UTLDATO;
-		var $SA_UTLTIL;          
+		var $SA_FRARKDEL; 
     }
 ?>  

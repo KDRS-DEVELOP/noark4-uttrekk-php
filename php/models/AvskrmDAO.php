@@ -16,6 +16,9 @@ class AvskrmDAO extends Noark4Base {
 		$avskrm = new Avskrm();
 		$avskrm->AV_KODE = 'SA';
 		$avskrm->AV_BETEGN = 'Saken Avsluttet';
+		$avskrm->AV_MIDLERTID = "0";
+		$avskrm->AV_BESVART = '0';
+
 		$this->logger->log($this->XMLfilename, "'SA/Saken Avsluttet' pair missing. Added here", Constants::LOG_INFO);
 		$this->infoIssued = true;
 		$this->writeToDestination($avskrm);
@@ -40,9 +43,15 @@ class AvskrmDAO extends Noark4Base {
 					$this->logger->log($this->XMLfilename, "Assuming AV_MIDLERTID (AVSKRTYPE) value F is 1", Constants::LOG_INFO);
 					$this->infoIssued = true; 
 				}
+				else {
+					$avskrm->AV_MIDLERTID = "0";
+					$this->logger->log($this->XMLfilename, "One of AV_KODE (" . $avskrm->AV_KODE. ") has null value for AV_MIDLERTID. Setting it to 0", Constants::LOG_WARNING);
+					$this->warningIssued = true;
 
-				if (is_null($result['BESVART'])) {	
-					$avskrm->AV_BESVART = $result['BESVART'];
+				}
+
+				if (isset($result['BESVART']) == false) {	
+					$avskrm->AV_BESVART = '0';
 					$this->logger->log($this->XMLfilename, "Assuming AV_BESVART (BESVART) null value is 0", Constants::LOG_INFO);
 					$this->infoIssued = true;
 				}

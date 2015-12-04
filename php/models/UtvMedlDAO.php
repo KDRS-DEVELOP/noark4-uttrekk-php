@@ -10,6 +10,9 @@ class UtvMedlDAO extends Noark4Base {
                 parent::__construct (Constants::getXMLFilename('UTVMEDL'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 		$this->selectQuery = "select PNID, UTVID, FUNKFRA, FUNKTIL, FUNKSJON, NR, REPPARTI, VARAPERSON, ADRID, MERKNAD from " . $SRC_TABLE_NAME . "";
 	} 
+
+	// NB!!! MERKNAD does not make it to through to te XML file because it's always empty and causes and "error" in arkn4. If you have merknad, switch it on again in
+	// noarDatabasestrutut.php
 	
 	function processTable () {
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
@@ -19,7 +22,18 @@ class UtvMedlDAO extends Noark4Base {
 				$utvMedl->UM_PNID = $result['PNID'];
 				$utvMedl->UM_UTVID = $result['UTVID'];
 				$utvMedl->UM_FRADATO = Utility::fixDateFormat($result['FUNKFRA']);
-				$utvMedl->UM_TILDATO = Utility::fixDateFormat($result['FUNKTIL']);
+
+				if (isset($result['FUNKTIL']) == false) {
+					$this->logger->log($this->XMLfilename, "UM_PNID (" . $result['PNID'] . ") is mising UM_TILDATO. This is fine accodring to DTD but arkn4 seems to require it. Setting UM_TILDATO to " . Utility::fixDateFormat(Constants::DATE_AUTO_END), Constants::LOG_WARNING);
+					$this->warningIssued = true;
+					$utvMedl->UM_TILDATO = Utility::fixDateFormat(Constants::DATE_AUTO_END);
+
+				} else {
+
+					$utvMedl->UM_TILDATO = Utility::fixDateFormat($result['FUNKTIL']);
+				}
+
+
 				$utvMedl->UM_FUNK = $result['FUNKSJON'];
 				$utvMedl->UM_RANGERING = '0';
 				$this->logger->log($this->XMLfilename, "UM.RANGERING has no value, setting to 0 for UM_PNID (" . $utvMedl->UM_PNID . ")", Constants::LOG_WARNING);
@@ -47,8 +61,9 @@ class UtvMedlDAO extends Noark4Base {
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO UTVMEDL (UM_PNID, UM_UTVID, UM_FRADATO, UM_TILDATO, UM_FUNK, UM_RANGERING, UM_SORT, UM_VARAFOR, UM_MERKNAD) VALUES (";
-	
+		//$sqlInsertStatement = "INSERT INTO UTVMEDL (UM_PNID, UM_UTVID, UM_FRADATO, UM_TILDATO, UM_FUNK, UM_RANGERING, UM_SORT, UM_VARAFOR, UM_MERKNAD) VALUES (";			
+		$sqlInsertStatement = "INSERT INTO UTVMEDL (UM_PNID, UM_UTVID, UM_FRADATO, UM_TILDATO, UM_FUNK, UM_RANGERING, UM_SORT, UM_VARAFOR) VALUES (";
+
 		$sqlInsertStatement .= "'" . $data->UM_PNID . "', ";
 		$sqlInsertStatement .= "'" . $data->UM_UTVID . "', ";
 		$sqlInsertStatement .= "'" . $data->UM_FRADATO . "', ";
@@ -56,34 +71,32 @@ class UtvMedlDAO extends Noark4Base {
 		$sqlInsertStatement .= "'" . $data->UM_FUNK . "', ";
 		$sqlInsertStatement .= "'" . $data->UM_RANGERING . "', ";
 		$sqlInsertStatement .= "'" . $data->UM_SORT . "', ";		
-		$sqlInsertStatement .= "'" . $data->UM_VARAFOR . "',";
-		$sqlInsertStatement .= "'" . $data->UM_MERKNAD. "'";
+		$sqlInsertStatement .= "'" . $data->UM_VARAFOR . "'";
+//		$sqlInsertStatement .= "'" . $data->UM_MERKNAD. "'";
 	
 		$sqlInsertStatement .= ");";
 		
 		$this->uttrekksBase->executeStatement($sqlInsertStatement);
     }
-    
-    
+
+
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVMEDL";
     	$mapping = array ('idColumn' => 'um_pnid', 
-				'rootTag' => 'UTVMEDL.TAB',	
-			    		'rowTag' => 'UTVMEDL',
+				'rootTag' => 'UTVMEDLEM.TAB',	
+			    		'rowTag' => 'UTVMEDLEM',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
-							'UM.PNID' => 'um_pnid',
 							'UM.UTVID' => 'um_utvid',
+							'UM.PNID' => 'um_pnid',
+							'UM.RANGERING' => 'um_rangering',
+    							'UM.VARAFOR' => 'um_varafor',
+							'UM.FUNK' => 'um_funk',
 							'UM.FRADATO' => 'um_fradato',
 							'UM.TILDATO' => 'um_tildato',
-							'UM.FUNK' => 'um_funk',
-							'UM.RANGERING' => 'um_rangering',
-							'UM.SORT' => 'um_sort',
-							'UM.REPRES' => 'um_repres',
-							'UM.MEDLEM' => 'um_medlem',
-    							'UM.VARAFOR' => 'um_varafor',
-    							'UM.MERKNAD' => 'um_merknad'
-
+							'UM.SORT' => 'um_sort'
+//							'UM.REPRES' => 'um_repres',
+//    							'UM.MERKNAD' => 'um_merknad'
   							)
  
 						) ;

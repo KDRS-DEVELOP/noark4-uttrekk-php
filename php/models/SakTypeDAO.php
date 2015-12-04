@@ -106,8 +106,8 @@ class SakTypeDAO extends Noark4Base {
 							'elements' => array(
 									'ST.TYPE' => 'st_type',
 									'ST.BETEGN' => 'st_betegn',
-									'ST.KLAGEADG' => 'st_klageadg',
-									'ST.UOFF' => 'st_uoff'
+									'ST.UOFF' => 'st_uoff',
+									'ST.KLAGEADG' => 'st_klageadg'
 								) 
 						) ;
 		

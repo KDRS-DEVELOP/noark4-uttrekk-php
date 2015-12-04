@@ -2,6 +2,14 @@ CHANGELOG.txt
 
 Noark 4 Uttrekk PHP
 
+### ver 0.1.2a 2015-01-29 Thomas Sødring, adjustments ###
+
+Some minor adjustments in php-files.
+
+Added php-files:
+extraction\JournalCreator.php
+extraction\SAKDOKCreator.php|
+
 ### ver 0.1.1a 2015-01-28 Thomas Sødring, CHAR8 replace DATE ###
 
 Datatype CHAR (8) replaces datatype DATE in multiple occurences and folders of PHP-files.

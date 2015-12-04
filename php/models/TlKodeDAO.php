@@ -17,11 +17,16 @@ class TlKodeDAO extends Noark4Base {
 	
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 
-				$tlkode = new TlKode();
-				$aliasAdm->TL_KODE = $result['TILLEGSK'];
-				$aliasAdm->TL_BETEGN = $result['ETEXT3'];
 
-				$this->writeToDestination($aliasAdm);
+				// There will be a null value to be ignored. No need to log
+				if (isset($result['TILLEGSK']) == true) {
+					$tlkode = new TlKode();
+					$aliasAdm->TL_KODE = $result['TILLEGSK'];
+
+					$aliasAdm->TL_BETEGN = $result['ETEXT3'];
+		
+					$this->writeToDestination($aliasAdm);
+				}
 		}
 		$this->srcBase->endQuery($this->selectQuery);
 	}

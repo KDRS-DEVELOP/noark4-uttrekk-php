@@ -19,7 +19,7 @@ class DokLinkDAO extends Noark4Base {
 		$this->kommuneName = $kommuneName;
 
 		$this->dokVersDAO = new DokVersDAO($this->srcBase, $this->uttrekksBase, "", $kommuneName, $logger);
-		$this->dokBeskDAO = new DokBeskDAO($this->srcBase, $this->uttrekksBase, "", $logger);
+		$this->dokBeskDAO = new DokBeskDAO($this->srcBase, $this->uttrekksBase, "", $kommuneName, $logger);
 	} 
 
 
@@ -413,7 +413,9 @@ class DokLinkDAO extends Noark4Base {
 		$dokVers->VE_REGAV = $regAv;
 		$dokVers->VE_TGKODE = $tgKode;
 		$dokVers->VE_LAGRENH = Constants::LAGRENHET;
-		$dokVers->VE_FILREF = $this->lookUpFileFromDatabase($dokId, $this->kommuneName);
+		$dokVers->VE_FILREF = "test";
+ //TODO .... FIX!!!!!!!!!!!!!!!!!!!!!!!
+//$this->lookUpFileFromDatabase($dokId, $this->kommuneName);
 
 		$this->dokVersDAO->processDokVers($dokVers);
 	}

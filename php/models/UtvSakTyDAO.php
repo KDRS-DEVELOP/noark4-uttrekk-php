@@ -45,12 +45,12 @@ class UtvSakTyDAO extends Noark4Base {
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVSAKTY";
     	$mapping = array ('idColumn' => 'su_kode', 
-  				'rootTag' => 'UTVSAKTY.TAB',	
-			    		'rowTag' => 'UTVSAKTY',
+  				'rootTag' => 'UTVSAKTYP.TAB',	
+			    		'rowTag' => 'UTVSAKTYP',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
-							'SU_KODE' => 'su_kode',
-							'SU_BETEGN' => 'su_betegn'
+							'SU.KODE' => 'su_kode',
+							'SU.BETEGN' => 'su_betegn'
   							) 
 						) ;
 		

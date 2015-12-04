@@ -27,7 +27,7 @@ class UtrekkMySQLBase {
 		}
 		if (mysql_select_db($uttrekk_db_database) == false) {
 			echo "Databasen " . $this->uttrekk_db_database . " finnes, må opprettes før du kan fortsette\n " ;
-			 
+			mysql_set_charset('utf8', $link);			 
 		} 
 	}
 	

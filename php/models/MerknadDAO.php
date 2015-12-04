@@ -15,7 +15,7 @@ class MerknadDAO extends Noark4Base {
 		
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$merknad = new Merknad();
-				$merknad->ME_ID = $result['NOKKEL'] . "_" . $result['KOMNR'];
+				$merknad->ME_ID = $result['NOKKEL'] . $result['KOMNR'];
 
 				if (!strcmp($result['REGISTER'], "S")) {
 					$merknad->ME_SAID = $result['NOKKEL'];	
@@ -24,16 +24,24 @@ class MerknadDAO extends Noark4Base {
 					$merknad->ME_JPID = $result['NOKKEL'];	
 				}
 				else {
-				 //die ("Unknown REGISTER value (" . $result['REGISTER'] . ") in " . $SRC_TABLE_NAME);
+				 die ("Unknown REGISTER value (" . $result['REGISTER'] . ") in " . $SRC_TABLE_NAME);
 				}
 
 				$merknad->ME_RNR = $result['KOMNR'];
 				$merknad->ME_ITYPE = $result['ITYPE'];
 				$merknad->ME_TGKODE = $result['UNNTOFF'];
-				$merknad->ME_TGGRUPPE = $result['GRUPPE'];
+				$merknad->ME_TGGRUPPE = $result['GRUPPEID'];
 				$merknad->ME_TEKST = $result['KOMMENTAR'];
 				$merknad->ME_REGAV = $result['SBHID'];
-				$merknad->ME_PVGAV = $result['PVGAV'];
+		
+				if (isset($result['PVGAV']) == true) {
+					$merknad->ME_PVGAV = $result['PVGAV'];
+				}
+				else {
+					$merknad->ME_PVGAV = '0'; // Not something in ESA, so this should be OK
+					$this->logger->log($this->XMLfilename, "MERKNAD ME.ID (" . $merknad->ME_ID . ") has null for  ME_PVGAV. Setting it to 0", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
 				$merknad->ME_REGDATO = Utility::fixDateFormat($result['ENDRDATO']);
 				
 				$this->writeToDestination($merknad);
@@ -45,7 +53,7 @@ class MerknadDAO extends Noark4Base {
 
 	function processMerknadFromSakOrJP($register, $nokkel, $untoff, $gruppeId, $merknadTekst, $sbhId) {
 		$merknad = new Merknad();
-		$merknad->ME_ID = $nokkel . "_0";
+		$merknad->ME_ID = $nokkel . "0";
 
 		if (!strcmp($register, "S")) {
 			$merknad->ME_SAID = $nokkel;	
@@ -63,6 +71,7 @@ class MerknadDAO extends Noark4Base {
 		$merknad->ME_TGGRUPPE = $gruppeId;
 		$merknad->ME_TEKST = $merknadTekst;
 		$merknad->ME_REGAV = $sbhId;
+		$merknad->ME_PVGAV = '0'; // Not something in ESA, so this should be OK
 		//$merknad->ME_REGDATO = Utility::fixDateFormat($regDato);
 
 		$this->writeToDestination($merknad);
@@ -89,7 +98,7 @@ class MerknadDAO extends Noark4Base {
 		$this->uttrekksBase->executeStatement($sqlInsertStatement);
 
     }
-	    
+
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM MERKNAD";
     	$mapping = array ('idColumn' => 'me_id', 
@@ -100,14 +109,14 @@ class MerknadDAO extends Noark4Base {
 							'ME.ID' => 'me_id',
 							'ME.SAID' => 'me_said',
 							'ME.JPID' => 'me_jpid',
-							'ME_RNR' => 'me_rnr',
-							'ME_ITYPE' => 'me_itype',
-    							'ME_TGKODE' => 'me_tgkode',
-							'ME_TGGRUPPE' => 'me_tggruppe',
-							'ME_TEKST' => 'me_tekst',
-							'ME_REGAV' => 'me_regav',
-							'ME_PVGAV' => 'me_pvgav',
-							'ME_REGDATO' => 'me_regdato'
+							'ME.RNR' => 'me_rnr',
+							'ME.ITYPE' => 'me_itype',
+    							'ME.TGKODE' => 'me_tgkode',
+							'ME.TGGRUPPE' => 'me_tggruppe',
+							'ME.REGDATO' => 'me_regdato',
+							'ME.REGAV' => 'me_regav',
+							'ME.PVGAV' => 'me_pvgav',
+							'ME.TEKST' => 'me_tekst'
   							) 
 						) ;
 		

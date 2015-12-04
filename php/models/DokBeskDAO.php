@@ -5,8 +5,11 @@ require_once 'models/Noark4Base.php';
 
 class DokBeskDAO extends Noark4Base {
 
-	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
+	protected $kommuneName;
+
+	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $kommuneName, $logger) {
                 parent::__construct (Constants::getXMLFilename('DOKBESK'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
+		$this->kommuneName = $kommuneName; 
 	} 
 
 	function processDokBeskrivelse($dokBesk) {
@@ -31,17 +34,22 @@ class DokBeskDAO extends Noark4Base {
 			$dokBesk->DB_KATEGORI = "UKJENT";
 		}
 
+		if (strcmp($dokBesk->DB_PAPIR, '1') == true) {
+ 			$dokBesk->DB_LOKPAPIR = "Kontakt arkivtjeneste i " . $this->kommuneName . " kommune";
+		}
+	
 		$this->writeToDestination($dokBesk);
 	}
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO DOKBESK  (DB_DOKID, DB_KATEGORI, DB_TITTEL, DB_PAPIR, DB_STATUS, DB_UTARBAV, DB_TGKODE, DB_TGGRUPPE, DB_AGDATO, DB_AGKODE, DB_UOFF) VALUES (";
+		$sqlInsertStatement = "INSERT INTO DOKBESK  (DB_DOKID, DB_KATEGORI, DB_TITTEL, DB_PAPIR, DB_LOKPAPIR, DB_STATUS, DB_UTARBAV, DB_TGKODE, DB_TGGRUPPE, DB_AGDATO, DB_AGKODE, DB_UOFF) VALUES (";
 	
 		$sqlInsertStatement .= "'" . $data->DB_DOKID . "', ";						
 		$sqlInsertStatement .= "'" . $data->DB_KATEGORI . "', ";
 		$sqlInsertStatement .= "'" . $data->DB_TITTEL . "', ";
 		$sqlInsertStatement .= "'" . $data->DB_PAPIR . "', ";
+		$sqlInsertStatement .= "'" . $data->DB_LOKPAPIR . "', ";
 		$sqlInsertStatement .= "'" . $data->DB_STATUS . "', ";
 		$sqlInsertStatement .= "'" . $data->DB_UTARBAV . "', ";
 		$sqlInsertStatement .= "'" . $data->DB_TGKODE . "', ";
@@ -54,6 +62,10 @@ class DokBeskDAO extends Noark4Base {
 		
 		$this->uttrekksBase->printErrorIfFKFail = false;
 
+//	echo $sqlInsertStatement . "\n";
+	$this->logger->log($this->XMLfilename, "SQL som skapr problem " . $sqlInsertStatement, Constants::LOG_WARNING);
+
+
 		if ($this->uttrekksBase->executeStatement($sqlInsertStatement) == false) {
 
 			if (mysql_errno() == Constants::MY_SQL_MISSING_FK_VALUE) {
@@ -61,9 +73,9 @@ class DokBeskDAO extends Noark4Base {
 				$errorString = mysql_error();
 				// Missing refernece to NOARKSAK. Probably UTGÅR - ingnored and logged as ERROR
 				if (strpos($errorString, "PERSON") !== FALSE) {
-					$this->logger->log($this->XMLfilename, "Missing PERSON with ID DB.UTARBAV(" . $data->DB_UTARBAV . ") for DOKID (" . $data->DB_UTARBAV . "). PERSON identified in DB.UTARBAV set to NOUSER Value (" . Constants::INGENBRUKER_ID . ")", Constants::LOG_ERROR);
+					$this->logger->log($this->XMLfilename, "Missing PERSON with ID DB.UTARBAV(" . $data->DB_UTARBAV . ") for DOKID (" . $data->DB_UTARBAV . "). PERSON identified in DB.UTARBAV set to NOUSER Value (" . Constants::INGENBRUKER_ID . ")", Constants::LOG_WARNING);
 
-					$this->errorIssued = true;
+					$this->warningIssued = true;
 
 					$data->DB_UTARBAV= Constants::INGENBRUKER_ID;
 					$this->writeToDestination($data);
@@ -86,14 +98,15 @@ class DokBeskDAO extends Noark4Base {
  	function createXML($extractor) {    
 		$sqlQuery = "SELECT * FROM DOKBESK";
 		$mapping = array ('idColumn' => 'db_dokid', 
-					'rootTag' => 'DOKBESK.TAB',	
-						'rowTag' => 'DOKBESK',
+					'rootTag' => 'DOKBESKRIV.TAB',	
+						'rowTag' => 'DOKBESKRIV',
 							'encoder' => 'utf8_decode',
 								'elements' => array(
 									'DB.DOKID' => 'db_dokid',
 									'DB.KATEGORI' => 'db_kategori',
 									'DB.TITTEL' => 'db_tittel',
 									'DB.PAPIR' => 'db_papir',
+									'DB.LOKPAPIR' => 'db_lokpapir',
 									'DB.STATUS' => 'db_status',
 									'DB.UTARBAV' => 'db_utarbav',
 									'DB.TGKODE' => 'db_tgkode',

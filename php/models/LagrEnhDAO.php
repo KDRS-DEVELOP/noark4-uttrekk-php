@@ -37,8 +37,8 @@ class LagrEnhDAO extends Noark4Base {
 						'rowTag' => 'LAGRENHET',
 							'encoder' => 'utf8_decode',
 								'elements' => array(
-									'LA_KODE' => 'la_kode',
-									'LA_BESKRIV' => 'la_beskriv'
+									'LA.KODE' => 'la_kode',
+									'LA.BESKRIV' => 'la_beskriv'
 									) 
 								) ;
 			

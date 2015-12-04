@@ -22,6 +22,8 @@ class UtvBehDAO extends Noark4Base {
 		// Problem we se is that a US.ID is 1:M from another table to this table
 		// So I have to generate it here. Everytime I resee a UTVID/SAKNR i use the already stored value
 		// in $utvalg2uvalgsakPK
+
+		// 
 		$usIdCounter = 1;
 		$utvalg2uvalgsakPK = array();
 
@@ -31,7 +33,6 @@ class UtvBehDAO extends Noark4Base {
 
 				$utvBeh = new UtvBeh();
 				$utvBeh->UB_ID = $result['BEHID'];
-				$utvBeh->UB_UTSAKID = $result['JOURAARNR'];
 				$utvBeh->UB_RFOLGE = $result['BEHNR'];
 
 				if (strcmp($result['MOTEID'], '0') == 0) {
@@ -59,8 +60,8 @@ class UtvBehDAO extends Noark4Base {
 
 				if (is_null($sakResult['ADMID']) == true) {
 					$utvBeh->UB_ADMID = Constants::ADMININDEL_TOPNIVA;
-					$this->logger->log($this->XMLfilename, "UB_ADMID is null for UB_ID (" . $result['BEHID'] . "), SAK ID (" . $result['JOURAARNR'] . ") Value mandatory, set to ADMININDEL_TOPNIVA VALUE (" . Constants::ADMININDEL_TOPNIVA  . ")", Constants::LOG_ERROR);
-					$this->errorIssued = true;
+					$this->logger->log($this->XMLfilename, "UB_ADMID is null for UB_ID (" . $result['BEHID'] . "), SAK ID (" . $result['JOURAARNR'] . ") Value mandatory, set to ADMININDEL_TOPNIVA VALUE (" . Constants::ADMININDEL_TOPNIVA  . ")", Constants::LOG_WARNING);
+					$this->warningIssued = true;
 
 				} else {
 					$utvBeh->UB_ADMID = $sakResult['ADMID'];
@@ -70,8 +71,8 @@ class UtvBehDAO extends Noark4Base {
 
 				if (is_null($sakResult['SBHID']) == true) {
 					$utvBeh->UB_SBHID = Constants::INGENBRUKER_ID;
-					$this->logger->log($this->XMLfilename, "UB_SBHID is null for UB_ID (" . $result['BEHID'] . "), SAK ID (" . $result['JOURAARNR'] . ") Value mandatory,  set to PERSON NOUSER Value (" . Constants::INGENBRUKER_ID  . ")", Constants::LOG_ERROR);
-					$this->errorIssued = true;
+					$this->logger->log($this->XMLfilename, "UB_SBHID is null for UB_ID (" . $result['BEHID'] . "), SAK ID (" . $result['JOURAARNR'] . ") Value mandatory,  set to PERSON NOUSER Value (" . Constants::INGENBRUKER_ID  . ")", Constants::LOG_WARNING);
+					$this->warningIssued = true;
 
 				} else {
 					$utvBeh->UB_SBHID = $sakResult['SBHID'];
@@ -90,8 +91,11 @@ class UtvBehDAO extends Noark4Base {
 					$US_ID = $usIdCounter;
 					$usIdCounter++;	
 				}
+				$utvBeh->UB_UTSAKID = $result['JOURAARNR']; // $US_ID;
 
-				$utvBeh->UB_PROTOKOLL = $result['PROTOKOLL'];
+				$utvBeh->UB_PROTOKOLL = '1';
+				$this->logger->log($this->XMLfilename, "For UB_ID (" . $utvBeh->UB_ID . "), SAK ID (" . $result['JOURAARNR'] . ") PROTOKOLL is (" . $result['BEHNR']  . ") Setting it to '1'", Constants::LOG_WARNING);
+				$this->warningIssued = true;
 
 				
 				$u1 = $sakResult['U1'];
@@ -161,9 +165,9 @@ class UtvBehDAO extends Noark4Base {
 	
 					$missingPersonId = $data->UB_SBHID;
 					
-					$this->logger->log($this->XMLfilename, "UB_SBHID VALUE (" . $data->UB_SBHID . ") for UB_ID (" . $data->UB_ID . "), SAK ID (" . $data->UB_UTSAKID . ") Does not exist in PERSON table. UB_SBHID is set to (" . Constants::INGENBRUKER_ID  . ")", Constants::LOG_ERROR);
+					$this->logger->log($this->XMLfilename, "UB_SBHID VALUE (" . $data->UB_SBHID . ") for UB_ID (" . $data->UB_ID . "), SAK ID (" . $data->UB_UTSAKID . ") Does not exist in PERSON table. UB_SBHID is set to (" . Constants::INGENBRUKER_ID  . ")", Constants::LOG_WARNING);
 					$data->UB_SBHID = Constants::INGENBRUKER_ID;
-					$this->errorIssued = true;
+					$this->warningIssued = true;
  					$this->writeToDestination($data);
 				}			
 				$this->logger->log($this->XMLfilename, "Error with FK" , Constants::LOG_WARNING);
@@ -174,25 +178,26 @@ class UtvBehDAO extends Noark4Base {
 
 
         }
-    
-    
+
+
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVBEH";
     	$mapping = array ('idColumn' => 'ub_moid', 
-  				'rootTag' => 'UTVBEH.TAB',	
-			    		'rowTag' => 'UTVBEH',
+  				'rootTag' => 'UTVBEHANDLING.TAB',	
+			    		'rowTag' => 'UTVBEHANDLING',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
-							'UB.MOID' => 'ub_moid',
 							'UB.ID' => 'ub_id',
-							'UB.RFOLGE' => 'ub_rfolge',
 							'UB.UTSAKID' => 'ub_utsakid',
-							'UB.BEHSTATUS' => 'ub_behstatus',
-							'UB.PROTOKOLL' => 'ub_protokoll',
-							'UB.AAR' => 'ub_aar',
+							'UB.RFOLGE' => 'ub_rfolge',
+							'UB.MOID' => 'ub_moid',
 							'UB.USEKNR' => 'ub_useknr',
+							'UB.AAR' => 'ub_aar',
+							'UB.BEHSTATUS' => 'ub_behstatus',
 							'UB.ADMID' => 'ub_admid',
-							'UB.SBHID' => 'ub_sbhid'
+							'UB.SBHID' => 'ub_sbhid',
+							'UB.PROTOKOLL' => 'ub_protokoll'
+
   							) 
 						) ;
 		

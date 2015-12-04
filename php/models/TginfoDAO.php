@@ -11,14 +11,6 @@ class TginfoDAO extends Noark4Base {
 		$this->selectQuery = "select PEID, JOURENHET, ADMID, AUTAV, DATO, TILDATO, AUTOPPAV from " . $SRC_TABLE_NAME . "";
 	} 
 
-/*
-
-
-(TJ.PEID , TJ.JENHET? , TJ.ADMID , TJ.AUTAV , TJ.FRADATO , TJ.TILDATO? , TJ.AUTOPPAV?), got 
-(TJ.PEID TJ.JENHET TJ.ADMID TJ.AUTAV )
-
-
-*/
 
 	function processTable () {
 	
@@ -27,8 +19,15 @@ class TginfoDAO extends Noark4Base {
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$tgInfo = new Tginfo();
 				$tgInfo->TJ_PEID = $result['PEID'];
+
 				$tgInfo->TJ_JENHET = $result['JOURENHET'];
 
+				if (isset($result['JOURENHET']) == false) {
+					$tgInfo->TJ_JENHET = Constants::JOURNENHET_MISSING;
+					$this->logger->log($this->XMLfilename, "For TJ_PEID (" . $result['PEID'] . ") TJ_JENHET is null. Required value. Setting it to " . Constants::JOURNENHET_MISSING , Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
+		
 				
 				if (isset($result['ADMID']) == false) {
 					$tgInfo->TJ_ADMID = '0';
@@ -59,15 +58,15 @@ class TginfoDAO extends Noark4Base {
 	
 	function writeToDestination($data) {		
 		
-		$sqlInsertStatement = "INSERT INTO TGINFO (TJ_PEID, TJ_JENHET, TJ_ADMID, TJ_AUTAV, TJ_FRADATO, TJ_TILDATO, TJ_AUTOPPAV) VALUES (";
+		$sqlInsertStatement = "INSERT INTO TGINFO (TJ_PEID, TJ_JENHET, TJ_ADMID, TJ_AUTAV, TJ_FRADATO) VALUES (";
     	    	
 		$sqlInsertStatement .= "'" . $data->TJ_PEID . "', ";
 		$sqlInsertStatement .= "'" . $data->TJ_JENHET  . "', ";
 		$sqlInsertStatement .= "'" . $data->TJ_ADMID . "', ";
 		$sqlInsertStatement .= "'" . $data->TJ_AUTAV . "', ";
-		$sqlInsertStatement .= "'" . $data->TJ_FRADATO . "', ";		
-		$sqlInsertStatement .= "'" . $data->TJ_TILDATO . "', ";
-		$sqlInsertStatement .= "'" . $data->TJ_AUTOPPAV . "' ";		
+		$sqlInsertStatement .= "'" . $data->TJ_FRADATO . "' ";		
+//		$sqlInsertStatement .= "'" . $data->TJ_TILDATO . "', ";
+//		$sqlInsertStatement .= "'" . $data->TJ_AUTOPPAV . "' ";		
 
 
 		$sqlInsertStatement.= ");";
@@ -97,9 +96,9 @@ class TginfoDAO extends Noark4Base {
 							'TJ.JENHET' => 'tj_jenhet',
 							'TJ.ADMID' => 'tj_admid',
 							'TJ.AUTAV' => 'tj_autav',
-							'TJ.FRADATO' => 'tj_fradato',
-							'TJ.TILDATO' => 'tj_tildato',
-							'TJ.AUTOPPAV' => 'tj_autoppav'
+							'TJ.FRADATO' => 'tj_fradato'
+//							'TJ.TILDATO' => 'tj_tildato',
+//							'TJ.AUTOPPAV' => 'tj_autoppav'
   							) 
 						) ;
 		

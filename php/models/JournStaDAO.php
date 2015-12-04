@@ -6,7 +6,7 @@ require_once 'models/Noark4Base.php';
 class JournStaDAO  extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
-                parent::__construct (Constants::getXMLFilename('JENARKDEL'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
+                parent::__construct (Constants::getXMLFilename('JOURNSTA'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 		$this->selectQuery = "select STATUS, BESKRIVELSE, ANSVAR, DOKKONTR, EKSPEDERT, FORARKIV, FORLEDER, FORSAKSBEH, FOREKST, FORINT from " . $SRC_TABLE_NAME . "";
 	} 
 	
@@ -54,7 +54,6 @@ class JournStaDAO  extends Noark4Base {
 
 	}
 
-
  	function createXML($extractor) {    
 		$sqlQuery = "SELECT * FROM JOURNSTA";
 		$mapping = array ('idColumn' => 'js_status', 
@@ -64,14 +63,14 @@ class JournStaDAO  extends Noark4Base {
 								'elements' => array(
 									'JS.STATUS' => 'js_status',
 									'JS.BETEGN' => 'js_betegn',
+									'JS.ANSVAR' => 'js_ansvar',
 									'JS.DOKKONTR' => 'js_dokkontr',
 									'JS.EKSPEDERT' => 'js_ekspedert',
 									'JS.FORARKIV' => 'js_forarkiv',
 									'JS.FORLEDER' => 'js_forleder',
 									'JS.FORSAKSBEH' => 'js_forsaksbeh',
 									'JS.FOREKST' => 'js_forekst',
-									'JS.FORINT' => 'js_forint',
-									'JS.ANSVAR' => 'js_ansvar'
+									'JS.FORINT' => 'js_forint'
 									) 
 							) ;
 			

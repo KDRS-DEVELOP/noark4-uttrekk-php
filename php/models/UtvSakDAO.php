@@ -67,9 +67,9 @@ class UtvSakDAO extends Noark4Base {
 				}
 
 				if (isset($dokType) == false) {
-					$this->logger->log($this->XMLfilename, "DOKTYPE for UTVDOK in JP (" . $jpID . ") is null!. Assigning DOKTYPE value 'IA' ikke angitt . Applies to DOKID (" . $dokResult['DOKID'] . ")", Constants::LOG_WARNING);
+					$this->logger->log($this->XMLfilename, "DOKTYPE for UTVDOK in JP (" . $jpID . ") is null!. Assigning DOKTYPE value 'Q' ikke angitt . Applies to DOKID (" . $dokResult['DOKID'] . ")", Constants::LOG_WARNING);
 					$this->warningIssued = true;
-					$dokType = "IA";	
+					$dokType = Constants::DOKTYPE_IKKE_ANNGITT;	
 				}
 
 				$utvBehDo->BD_DOKID = $dokResult['DOKID'];
@@ -219,7 +219,7 @@ class UtvSakDAO extends Noark4Base {
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO  UTVSAK (US_UTVID, US_ID, US_SAKSTYPE, US_TITTEL, US_LUKKET, US_TGKODE, US_TGGRUPPE, US_UOFF, US_SAMMENR, US_SAID, US_POLSGID,  US_JPID) VALUES (";
+		$sqlInsertStatement = "INSERT INTO UTVSAK (US_UTVID, US_ID, US_SAKSTYPE, US_TITTEL, US_LUKKET, US_TGKODE, US_TGGRUPPE, US_UOFF, US_SAMMENR, US_SAID, US_POLSGID,  US_JPID) VALUES (";
 		$sqlInsertStatement .= "'" . $data->US_UTVID . "', ";						
 		$sqlInsertStatement .= "'" . $data->US_ID . "', ";
 		$sqlInsertStatement .= "'" . $data->US_SAKSTYPE . "', ";

@@ -141,8 +141,8 @@ class OrdnVerdDAO extends Noark4Base {
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'OV.ORDNPRI' => 'ov_ordnpri',
-							'OV.FAR' => 'ov_far',
 							'OV.ORDNVER' => 'ov_ordnver',
+							'OV.FAR' => 'ov_far',
 							'OV.BESKR' => 'ov_beskr',
 							'OV.REGFLAGG' => 'ov_regflagg',
 							'OV.SEKFLAGG' => 'ov_sekflagg'

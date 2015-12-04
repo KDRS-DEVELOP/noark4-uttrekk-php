@@ -52,8 +52,8 @@ class EnhTypeDAO extends Noark4Base {
   function createXML($extractor) {
     	$sqlQuery = "SELECT * FROM ENHTYPE";
     	$mapping = array ('idColumn' => 'et_kode', 
-  				'rootTag' => 'ENHTYPE.TAB',	
-			    		'rowTag' => 'ENHTYPE',
+  				'rootTag' => 'ENHETSTYPE.TAB',	
+			    		'rowTag' => 'ENHETSTYPE',
   						'encoder' => 'utf8_decode',
 							'elements' => array(
 								'ET.KODE' => 'et_kode',

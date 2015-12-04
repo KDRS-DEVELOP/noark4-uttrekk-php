@@ -12,6 +12,23 @@ class AdrAdmEnhDAO extends Noark4Base {
 		$this->logger=$logger;
 	} 
 
+	public function countRowsInTableAfter() {
+		$tableName = 'ADRADMENH'; 
+		$handle = $this->uttrekksBase->executeQueryFetchResultHandle("SELECT COUNT(*) AS COUNTROWS FROM " .  $tableName);
+		$countRows = -1;
+
+		if (isset($handle)) {
+			$row = mysql_fetch_array($handle);
+			if (isset($row))
+				$countRows  =  $row['COUNTROWS'];
+		
+			$this->uttrekksBase->freeHandle($handle);
+		}
+		return $countRows;
+	}
+
+
+
 
 	function processTable () {
 
@@ -22,7 +39,7 @@ class AdrAdmEnhDAO extends Noark4Base {
 			$adrAdmEnh= new AdrAdmEnh();
 			$adrAdmEnh->AA_ADRID = $result['ADRID'];
 			$adrAdmEnh->AA_ADMID = $result['ORGENHET'];
-			$this->writeToDestination($enhType);
+			$this->writeToDestination($adrAdmEnh);
 		}
 
 		$this->srcBase->endQuery($this->selectQuery);
@@ -48,6 +65,7 @@ class AdrAdmEnhDAO extends Noark4Base {
     	$mapping = array ('idColumn' => 'AA_ADRID', 
   				'rootTag' => 'ADRADMENH.TAB',	
 			    		'rowTag' => 'ADRADMENH',
+					'fileName' => 'ADRADMEN',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'AA.ADRID' => 'aa_adrid',

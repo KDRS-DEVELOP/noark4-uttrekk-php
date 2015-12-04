@@ -14,11 +14,13 @@ class JournEnhDAO  extends Noark4Base {
 	
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
 
-/*		$journenh = new JournEnh();
-		$journenh->JE_JENHET = "";
-		$journenh->JE_BETEGN = "";
+		$journenh = new JournEnh();
+		$journenh->JE_JENHET = Constants::JOURNENHET_MISSING;
+		$journenh->JE_BETEGN = "Der journalenhet er påkrevd men mangler i basen";
 		$this->writeToDestination($journenh);
-*/
+		$this->logger->log($this->XMLfilename, "Adding a fictive JE_JENHET with value (" . Constants::JOURNENHET_MISSING  . ") to be used with missing JOURENHET in extraction", Constants::LOG_INFO);
+		$this->infoIssued = true;
+
 
 
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
@@ -47,8 +49,8 @@ class JournEnhDAO  extends Noark4Base {
      function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM JOURNENH";
     	$mapping = array ('idColumn' => 'je_jenhet', 
-  				'rootTag' => 'JOURNENH.TAB',	
-			    		'rowTag' => 'JOURNENH',
+  				'rootTag' => 'JOURNENHET.TAB',	
+			    		'rowTag' => 'JOURNENHET',
   						'encoder' => 'utf8_decode',
 							'elements' => array(
 								'JE.JENHET' => 'je_jenhet',

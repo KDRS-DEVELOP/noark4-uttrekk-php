@@ -7,7 +7,7 @@ class TilleggDAO extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('TILLEGG'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
-		$this->selectQuery = "select ID, JOURAARNR, REFAARNR, DOKID, FILNR, VARIANT, ITYPE, TIDSPKT, PNID FROM " . $SRC_TABLE_NAME . "";
+		$this->selectQuery = "select ID, JOURAARNR, REFAARNR, DOKID, FILNR, VARIANT, ITYPE, TIDSPKT, PNID, INFO FROM " . $SRC_TABLE_NAME . "";
 	} 
 	
 	function processTable () {
@@ -25,13 +25,13 @@ class TilleggDAO extends Noark4Base {
 				$tillegg->TI_ITYPE = $result['ITYPE'];
 				$tillegg->TI_REGDATO = $result['TIDSPKT'];
 				$tillegg->TI_REGAV = $result['PNID'];
-
+				$tillegg->TI_TEKST = mysql_real_escape_string($result['INFO']);
 				$this->writeToDestination($tillegg);
 		}
 		$this->srcBase->endQuery($this->selectQuery);
 
 
-		$dgtilleggsinfoSQL = "select ID, JOURAARNR, REFAARNR, DOKID, FILNR, VARIANT, ITYPE, TIDSPKT, PNID FROM  DGTILLEGGSINFO";
+		$dgtilleggsinfoSQL = "select ID, JOURAARNR, REFAARNR, DOKID, FILNR, VARIANT, RNR, ITYPE, UNNTOFF, GRUPPEID, REGDATO, REGAV, PVGAV, TEKST FROM  DGTILLEGGSINFO";
 		// There is a a table called "DGTILLEGGSINFO" that might also contain information to b eextracted 
 		$this->srcBase->createAndExecuteQuery ($dgtilleggsinfoSQL);
 	
@@ -46,9 +46,9 @@ class TilleggDAO extends Noark4Base {
 				$tillegg->TI_VARIANT = $result['VARIANT'];
 				$tillegg->TI_RNR = $result['RNR'];
 				$tillegg->TI_ITYPE = $result['ITYPE'];
-				$tillegg->TI_TGKODE = $result['UNTOFF'];
+				$tillegg->TI_TGKODE = $result['UNNTOFF'];
 				$tillegg->TI_TGGRUPPE = $result['GRUPPEID'];
-				$tillegg->TI_REGDATO = $result['TIDSPKT'];
+				$tillegg->TI_REGDATO = Utility::fixDateFormat($result['REGDATO']);
 				$tillegg->TI_REGAV = $result['REGAV'];
 				$tillegg->TI_PVGAV = $result['PVGAV'];
 				$tillegg->TI_TEKST = $result['TEKST'];
@@ -81,9 +81,16 @@ TI_REGAV, TI_PVGAV, TI_TEKST) VALUES (";
 
 		
 		$sqlInsertStatement.= ");";
+  		$this->uttrekksBase->printErrorIfDuplicateFail = false;	
+		if ($this->uttrekksBase->executeStatement($sqlInsertStatement) == false) {
+			// 1062 == duplicate key. Scary to hardcode, but can't find mysql constants somewhere
+			if (mysql_errno() == Constants::MY_SQL_DUPLICATE) {
+				// This table is know to contain duplicates. We just log and continue
+				$this->logger->log($this->XMLfilename, "Duplicate values on PK detected. This is probably not an error in ESA but more a problem with the extraction code not being able to convert løpenummer to journalpostnummer  TI_ID(" . $data->TI_ID ."), TI_TEKST(" . $data->TI_TEKST . ")", Constants::LOG_ERROR);
+			}
+		}
+  		$this->uttrekksBase->printErrorIfDuplicateFail = true;
 		
-		$this->uttrekksBase->executeStatement($sqlInsertStatement);
-
     }
 
     

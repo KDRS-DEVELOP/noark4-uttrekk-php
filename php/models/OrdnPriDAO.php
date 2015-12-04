@@ -13,6 +13,28 @@ class OrdnPriDAO extends Noark4Base {
 	} 
 
 	function processTable () {
+
+		$ordnpri = new OrdnPri();
+ 
+		$ordnpri->OP_ORDNPRI = 'EM';
+		$ordnpri->OP_BETEGN = 'Elevmappe';
+		$ordnpri->OP_LTEKST = 'Added at extraction';
+		$ordnpri->OP_TYPE = 'UO';
+		$ordnpri->OP_OVBESK = '0';
+		$ordnpri->OP_KLFLAGG = '1';
+
+		$ordnpri->OP_SIFLAGG = '1';
+		$ordnpri->OP_EVOK = '1';
+		$ordnpri->OP_EVAUTO = '0';
+		$ordnpri->OP_SEKFLAGG = '1';
+
+		
+		$this->logger->log($this->XMLfilename, "Mising EM in ORDNPRO. Added here" , Constants::LOG_WARNING);
+		$this->warningIssued = true;
+	
+		$this->writeToDestination($ordnpri);
+
+
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$ordnpri = new OrdnPri();
@@ -27,11 +49,12 @@ class OrdnPriDAO extends Noark4Base {
 				$ordnpri->OP_EVOK = $result['EVOK'];
 				$ordnpri->OP_EVAUTO = $result['EVAUTO'];
 				$ordnpri->OP_SEKFLAGG = $result['SEKFLAGG'];
-				$ordnpri->OP_FRADATO = Utility::fixDateFormat($result['FRADATO']);
+//				$ordnpri->OP_FRADATO = Utility::fixDateFormat($result['FRADATO']);
 				$ordnpri->OP_TILDATO = Utility::fixDateFormat($result['TILDATO']);
 				$ordnpri->OP_TGKODE = $result['UNNTOFF'];
 
 				$this->logger->log($this->XMLfilename, "SI_FLAGG has no value for " . $ordnpri->OP_ORDNPRI . " setting it to '1'" , Constants::LOG_WARNING);	
+				$this->warningIssued = true;
 
 				$this->writeToDestination($ordnpri);
 		}
@@ -40,7 +63,8 @@ class OrdnPriDAO extends Noark4Base {
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO ORDNPRI (OP_ORDNPRI, OP_BETEGN, OP_LTEKST, OP_TYPE, OP_OVBESK, OP_KLFLAGG, OP_SIFLAGG, OP_EVOK, OP_EVAUTO, OP_SEKFLAGG, OP_FRADATO, OP_TILDATO, OP_TGKODE) VALUES (";
+//		$sqlInsertStatement = "INSERT INTO ORDNPRI (OP_ORDNPRI, OP_BETEGN, OP_LTEKST, OP_TYPE, OP_OVBESK, OP_KLFLAGG, OP_SIFLAGG, OP_EVOK, OP_EVAUTO, OP_SEKFLAGG, OP_FRADATO, OP_TILDATO, OP_TGKODE) VALUES (";
+		$sqlInsertStatement = "INSERT INTO ORDNPRI (OP_ORDNPRI, OP_BETEGN, OP_LTEKST, OP_TYPE, OP_OVBESK, OP_KLFLAGG, OP_SIFLAGG, OP_EVOK, OP_EVAUTO, OP_SEKFLAGG,  OP_TILDATO, OP_TGKODE) VALUES (";
 	
 		$sqlInsertStatement .= "'" . $data->OP_ORDNPRI . "', ";			
 		$sqlInsertStatement .= "'" . $data->OP_BETEGN . "', ";			
@@ -52,7 +76,7 @@ class OrdnPriDAO extends Noark4Base {
 		$sqlInsertStatement .= "'" . $data->OP_EVOK . "', ";
 		$sqlInsertStatement .= "'" . $data->OP_EVAUTO . "', ";
 		$sqlInsertStatement .= "'" . $data->OP_SEKFLAGG . "', ";
-		$sqlInsertStatement .= "'" . $data->OP_FRADATO . "', ";
+//		$sqlInsertStatement .= "'" . $data->OP_FRADATO . "', ";
 		$sqlInsertStatement .= "'" . $data->OP_TILDATO . "', ";
 		$sqlInsertStatement .= "'" . $data->OP_TGKODE . "'";
 	
@@ -87,7 +111,7 @@ class OrdnPriDAO extends Noark4Base {
 								'OP.EVOK' => 'op_evok',
 								'OP.EVAUTO' => 'op_evauto',
 								'OP.SEKFLAGG' => 'op_sekflagg',
-								'OP.FRADATO' => 'op_fradato',
+//								'OP.FRADATO' => 'op_fradato',
 								'OP.TILDATO' => 'op_tildato',
 								'OP.TGKODE' => 'op_tgkode'
 								) 

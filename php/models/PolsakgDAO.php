@@ -60,9 +60,9 @@ class PolsakgDAO extends Noark4Base {
 				}
 
 				$polSakG->SG_UOFF = $result['HJEMMEL'];
-				$polSakG->SG_STARTDATO = $result['AAPNET'];
-				$polSakG->SG_VEDTDATO = $result['AVSLUTTET'];
-				$polSakG->SG_SISTEVEDT = $result['AVSLUTTET'];
+				$polSakG->SG_STARTDATO = Utility::fixDateFormat($result['AAPNET']);
+				$polSakG->SG_VEDTDATO = Utility::fixDateFormat($result['AVSLUTTET']);
+				//$polSakG->SG_SISTEVEDT = Utility::fixDateFormat($result['AVSLUTTET']);
 				$polSakG->SG_MERKNAD = $result['MERKNAD'];
 
 				$this->writeToDestination($polSakG);
@@ -95,8 +95,8 @@ class PolsakgDAO extends Noark4Base {
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM POLSAKG";
     	$mapping = array ('idColumn' => 'sg_id', 
-  				'rootTag' => 'POLSAKG.TAB',	
-			    		'rowTag' => 'POLSAKG',
+  				'rootTag' => 'POLSAKSGANG.TAB',	
+			    		'rowTag' => 'POLSAKSGANG',
   						'encoder' => 'utf8_decode',
   							'elements' => array(
 								'SG.ID' => 'sg_id',

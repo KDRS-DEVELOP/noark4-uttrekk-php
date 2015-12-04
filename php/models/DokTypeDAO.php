@@ -16,14 +16,14 @@ class DokTypeDAO extends Noark4Base {
 
 
 		$dokType = new DokType();
-		$dokType->ND_DOKTYPE = "IA";
-		$dokType->ND_BETEGN = "I noen tilfeller mangler DOKTYPE (verdi lik null). Ser ut som det er i saker som utgår men ikke bekreftet. IA står for ikke angitt og brukes for disse";
+		$dokType->ND_DOKTYPE = Constants::DOKTYPE_IKKE_ANNGITT;
+		$dokType->ND_BETEGN = "Der ND_DOKTYPE ikke har en verdi";
 		$dokType->ND_EKSTPROD = '1';
 		$dokType->ND_INTMOT = '1';
 		$dokType->ND_EKSTMOT = '1';
 		$dokType->ND_OPPF = '1';
 		$this->writeToDestination($dokType);
-		$this->logger->log($this->XMLfilename, "In some instances DOKTYPE is mising. Adding a Not 'specified value' DOKTYPE (IA) that can be used with these instances", Constants::LOG_INFO);
+		$this->logger->log($this->XMLfilename, "In some instances DOKTYPE is mising. Adding a Not 'specified value' DOKTYPE (Q) that can be used with these instances", Constants::LOG_INFO);
 		$this->infoIssued = true;
 
 

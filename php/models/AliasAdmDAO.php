@@ -42,8 +42,8 @@ class AliasAdmDAO extends Noark4Base {
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM ALIASADM";
     	$mapping = array ('idColumn' => 'al_admidfra', 
-  				'rootTag' => 'ALIASADM.TAB',	
-			    		'rowTag' => 'ALIASADM',
+  				'rootTag' => 'ALIASADMENH.TAB',	
+			    		'rowTag' => 'ALIASADMENH',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'AL.ADMIDFRA' => 'al_admidfra',

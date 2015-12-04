@@ -70,6 +70,8 @@ class AdminDelDAO extends Noark4Base {
     }
 	
 
+ //ADMINDEL (AI.ID , AI.IDFAR? , AI.FORKDN? , AI.ADMKORT? , AI.ADMBET? , AI.TYPE? , AI.RPGRUPPE? , AI.FRADATO? , AI.TILDATO?)>
+
 	
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM ADMINDEL";

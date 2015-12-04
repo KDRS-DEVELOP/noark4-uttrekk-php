@@ -10,7 +10,7 @@ class AdressekpDAO extends Noark4Base {
 	public function  __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('ADRESSEK'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 
-		$this->selectQuery = "select ADRID, ADRTYPE, NAVN, ADRESSE, ADRESSE2, POSTNR, POSTSTED, EPOSTADR, FAX, TELEFON, ORGNR from " . $SRC_TABLE_NAME . "";
+		$this->selectQuery = "select ADRID, ADRTYPE, NAVNKODE, NAVN, ADRESSE, ADRESSE2, POSTNR, POSTSTED, EPOSTADR, FAX, TELEFON, ORGNR from " . $SRC_TABLE_NAME . "";
 	} 
 	
 	function processTable () {
@@ -20,6 +20,7 @@ class AdressekpDAO extends Noark4Base {
 				$adressekp = new Adressekp();
 				$adressekp->AK_ADRID = $result['ADRID'];
 				$adressekp->AK_TYPE = $result['ADRTYPE'];
+				$adressekp->AK_KORTNAVN = $result['NAVNKODE'];
 				$adressekp->AK_NAVN = $result['NAVN'];
 				$adressekp->AK_POSTADR = $result['ADRESSE'] . $result['ADRESSE2'];
 				$adressekp->AK_POSTNR = $result['POSTNR'];
@@ -36,10 +37,11 @@ class AdressekpDAO extends Noark4Base {
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO ADRESSEK (AK_ADRID, AK_TYPE, AK_NAVN, AK_POSTADR, AK_POSTNR, AK_POSTSTED, AK_EPOST, AK_FAKS, AK_TLF, AK_ORGNR) VALUES (";
+		$sqlInsertStatement = "INSERT INTO ADRESSEK (AK_ADRID, AK_TYPE, AK_KORTNAVN, AK_NAVN, AK_POSTADR, AK_POSTNR, AK_POSTSTED, AK_EPOST, AK_FAKS, AK_TLF, AK_ORGNR) VALUES (";
 	
 		$sqlInsertStatement .= "'" . $data->AK_ADRID . "', ";						
 		$sqlInsertStatement .= "'" . $data->AK_TYPE . "', ";
+		$sqlInsertStatement .= "'" . $data->AK_KORTNAVN . "', ";
 		$sqlInsertStatement .= "'" . $data->AK_NAVN . "', ";
 		$sqlInsertStatement .= "'" . $data->AK_POSTADR . "', ";
 		$sqlInsertStatement .= "'" . $data->AK_POSTNR . "', ";
@@ -73,6 +75,7 @@ class AdressekpDAO extends Noark4Base {
   						'elements' => array(
 						'AK.ADRID' => 'ak_adrid',
 						'AK.TYPE' => 'ak_type',
+    						'AK.KORTNAVN' => 'ak_kortnavn',
     						'AK.NAVN' => 'ak_navn',
     						'AK.POSTADR' => 'ak_postadr',
     						'AK.POSTNR' => 'ak_postnr',

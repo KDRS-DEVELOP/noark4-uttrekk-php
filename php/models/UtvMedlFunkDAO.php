@@ -50,15 +50,15 @@ class UtvMedlFunkDAO extends Noark4Base {
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVMEDLF";
     	$mapping = array ('idColumn' => 'mk_kode', 
-  				'rootTag' => 'UTVMEDLF.TAB',	
-			    		'rowTag' => 'UTVMEDLF',
+  				'rootTag' => 'UTVMEDLFUNK.TAB',	
+			    		'rowTag' => 'UTVMEDLFUNK',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'MK.KODE' => 'mk_kode',
 							'MK.BETEGN' => 'mk_betegn',
-							'MK_TALE' => 'mk_tale',
-							'MK_MEDLEM' => 'mk_medlem',
-							'MK_SEKR' => 'mk_sekr',
+							'MK.TALE' => 'mk_tale',
+							'MK.MEDLEM' => 'mk_medlem',
+							'MK.SEKR' => 'mk_sekr',
 							'MK.FMKODE' => 'mk_fmkode'
   							) 
 						) ;

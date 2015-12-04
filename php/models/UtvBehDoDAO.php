@@ -9,15 +9,10 @@ class UtvBehDoDAO extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('UTVBEHDO'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
-		$this->selectQuery = "select * from " . $SRC_TABLE_NAME . "";
-		
+		$this->selectQuery = "select * from " . $SRC_TABLE_NAME . "";		
 	} 
 	
 	function processUtvBehDo($utvBehDo) {
-
-
-		
-
 		$this->writeToDestination($utvBehDo);
 	}
 
@@ -63,17 +58,17 @@ class UtvBehDoDAO extends Noark4Base {
     
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVBEHDO";
-    	$mapping = array ('idColumn' => '', 
-  				'rootTag' => 'UTVBEHDO.TAB',	
-			    		'rowTag' => 'UTVBEHDO',
+    	$mapping = array ('idColumn' => 'bd_behid', 
+  				'rootTag' => 'UTVBEHDOK.TAB',	
+			    		'rowTag' => 'UTVBEHDOK',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
-							'BD.JPID' => 'bd_jpid',
 							'BD.BEHID' => 'bd_behid',
 							'BD.DOKID' => 'bd_dokid',
-							'BD.DOKTYPE' => 'bd_doktype',
+							'BD.NDOKTYPE' => 'bd_ndoktype',
 							'BD.STATUS' => 'bd_status',
-							'BD.NDOKTYPE' => 'bd_ndoktype'
+							'BD.JPID' => 'bd_jpid',
+							'BD.DOKTYPE' => 'bd_doktype'
   							) 
 						) ;
 		

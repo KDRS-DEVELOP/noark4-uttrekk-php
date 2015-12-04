@@ -22,7 +22,7 @@ class NoarkSakDAO extends Noark4Base {
 		parent::__construct (Constants::getXMLFilename('NOARKSAK'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);		
 		$this->ordVerdDAO = $ordVerdDAO;
 		$this->merknadDAO = $merknadDAO;
-		$this->selectQuery = "select JOURAARNR, JOURAAR, JOURNR, PAPIR, AAPNET, INNH1, INNH2, MERKNAD, U1, STATUS, FYSARK, FRAARKDEL, SAKTYPE, SAKART, JOURENHET, OTYPE, OKODE1, UNAVN, ADMID, UNNTOFF, HJEMMEL from " . $SRC_TABLE_NAME . "";
+		$this->selectQuery = "select JOURAARNR, JOURAAR, JOURNR, PAPIR, AAPNET, INNH1, INNH2, MERKNAD, U1, STATUS, FYSARK, FRAARKDEL, SAKTYPE, SAKART, JOURENHET, OTYPE, OKODE1, UNAVN, ADMID, SBHID, UNNTOFF, HJEMMEL from " . $SRC_TABLE_NAME . "";
 	} 
 		
 
@@ -149,6 +149,7 @@ class NoarkSakDAO extends Noark4Base {
 				$merknad = $result['MERKNAD'];
 				$sbhId = $noarkSak->SA_ANSVID;
 
+				$noarkSak->SA_ANTJP = $this->getNumberJP($noarkSak->SA_ID);
 
 // This is where you are. fixing this->ordVerdDAO->addOrdnVerdi($ordPrinsipp, $ordVerdi, $ordBeskrivelse);
 // yo ucn pick up some values OTYPE e.g GB/
@@ -177,10 +178,20 @@ class NoarkSakDAO extends Noark4Base {
 
     } // function getSak($SA_ID)
     
-    
+  
+	function getNumberJP($SA_ID) {
+
+		$jpCountQuery = "SELECT COUNT(*) AS COUNT FROM DGJMJO WHERE JOURAARNR = '" . $SA_ID . "'";
+		$this->srcBase->createAndExecuteQuery ($jpCountQuery);
+		$result = $this->srcBase->getQueryResult ($jpCountQuery); 
+		$this->srcBase->endQuery($jpCountQuery);
+		return $result['COUNT']; 
+
+	}
+  
     function writeToDestination($data) {
 
-		$sqlInsertSak = "INSERT INTO NOARKSAK (SA_ID, SA_SAAR, SA_SEKNR,  SA_PAPIR, SA_DATO, SA_TITTEL, SA_U1, SA_STATUS, SA_ARKDEL, SA_TYPE, SA_JENHET,  SA_ADMID, SA_ANSVID, SA_TGKODE, SA_UOFF, SA_ANTJP, SA_BEVTID, SA_KASSKODE, SA_KASSDATO, SA_PROSJEKT, SA_PRES,  SA_FRARKDEL, SA_UTLDATO, SA_UTLTIL) VALUES (";
+		$sqlInsertSak = "INSERT INTO NOARKSAK (SA_ID, SA_SAAR, SA_SEKNR,  SA_PAPIR, SA_DATO, SA_TITTEL, SA_U1, SA_STATUS, SA_ARKDEL, SA_TYPE, SA_JENHET,  SA_ADMID, SA_ANSVID, SA_TGKODE, SA_UOFF, SA_ANTJP, SA_BEVTID, SA_PRES,  SA_FRARKDEL) VALUES (";
 
 
 		$sqlInsertSak .= "'" . $data->SA_ID . "', ";
@@ -200,13 +211,11 @@ class NoarkSakDAO extends Noark4Base {
 		$sqlInsertSak .= "'" . $data->SA_UOFF . "', ";
 		$sqlInsertSak .= "'" . $data->SA_ANTJP . "', ";
 		$sqlInsertSak .= "'" . $data->SA_BEVTID . "', ";
-		$sqlInsertSak .= "'" . $data->SA_KASSKODE . "', ";
-		$sqlInsertSak .= "'" . Utility::fixDateFormat($data->SA_KASSDATO) . "', "; 
-		$sqlInsertSak .= "'" . $data->SA_PROSJEKT . "', ";
+//		$sqlInsertSak .= "'" . $data->SA_KASSKODE . "', ";
+//		$sqlInsertSak .= "'" . Utility::fixDateFormat($data->SA_KASSDATO) . "', "; 
+//		$sqlInsertSak .= "'" . $data->SA_PROSJEKT . "', ";
 		$sqlInsertSak .= "'" . $data->SA_PRES . "', ";
-		$sqlInsertSak .= "'" . $data->SA_FRARKDEL . "', "; 
-		$sqlInsertSak .= "'" . Utility::fixDateFormat($data->SA_UTLDATO) . "', "; 
-		$sqlInsertSak .= "'" . $data->SA_UTLTIL . "'";
+		$sqlInsertSak .= "'" . $data->SA_FRARKDEL . "'"; 
 
 		$sqlInsertSak .= ");";
 		
@@ -240,13 +249,11 @@ class NoarkSakDAO extends Noark4Base {
 							'SA.SISTEJP' => 'sa_sistejp',
 							'SA.ANTJP' => 'sa_antjp',
 							'SA.BEVTID' => 'sa_bevtid',
-							'SA.KASSKODE' => 'sa_kasskode',
-							'SA.KASSDATO' => 'sa_kassdato',
-							'SA.PROSJEKT' => 'sa_prosjekt',
+//							'SA.KASSKODE' => 'sa_kasskode',
+//							'SA.KASSDATO' => 'sa_kassdato',
+//							'SA.PROSJEKT' => 'sa_prosjekt',
 							'SA.PRES' => 'sa_pres',
-							'SA.FRARKDEL' => 'sa_frarkdel',
-							'SA.UTLDATO' => 'sa_utldato',
-							'SA.UTLTIL' => 'sa_utltil'
+							'SA.FRARKDEL' => 'sa_frarkdel'
   							) 
 						) ;
 		

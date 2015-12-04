@@ -16,14 +16,39 @@ class ArkivDAO extends Noark4Base {
 	
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
 
+
+		$arkiv = new Arkiv();
+		$arkiv->AR_ARKIV = "RNG";
+		$arkiv->AR_BETEGN = "RINGPERM added RINGPERM ARKIVDEL. Added so that structure is correct the extracttion.";
+		$arkiv->AR_NUMSER = '1'; 
+		$arkiv->AR_FRADATO = Utility::fixDateFormat(Constants::DATE_AUTO_START);
+		$arkiv->AR_TILDATO = Utility::fixDateFormat(Constants::DATE_AUTO_END);
+		$this->logger->log($this->XMLfilename, "Creating an AR_ARKIV (" . $arkiv->AR_ARKIV . ") to handle an ARKIVDEL called RINGPERM that is missing a reference to ARKIV. Setting AR.FRADATO to Constants::DATE_AUTO_START which has value (". Utility::fixDateFormat(Constants::DATE_AUTO_START) . ") Setting AR.TILDATO to Constants::DATE_AUTO_END which has value (". Utility::fixDateFormat(Constants::DATE_AUTO_END).  ")", Constants::LOG_WARNING);
+		$this->warningIssued = true;
+
+		$this->logger->log($this->XMLfilename, "AR_ARKIV (" . $arkiv->AR_ARKIV . ") has null value for AR.TILDATO. Setting AR.TILDATO to Constants::DATE_AUTO_END which has value (". Constants::DATE_AUTO_END.  ")", Constants::LOG_WARNING);
+		$this->warningIssued = true;
+			
+		
+		$this->writeToDestination($arkiv);
+
+
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$arkiv = new Arkiv();
 				$arkiv->AR_ARKIV = $result['ARKIV'];
 				$arkiv->AR_BETEGN = $result['BESKRIVELSE'];
 				// TODO : VERY IMPORTANT CHECK NUMSER
 				$arkiv->AR_NUMSER = '1'; 
-				$arkiv->AR_FRADATO = Utility::fixDateFormat($result['FRADATO']); 
-				$arkiv->AR_TILDATO = Utility::fixDateFormat($result['TILDATO']);					
+				$arkiv->AR_FRADATO = Utility::fixDateFormat($result['FRADATO']);
+
+				if (isset($result['TILDATO']) == true)  
+					$arkiv->AR_TILDATO = Utility::fixDateFormat($result['TILDATO']);
+				else {
+					$arkiv->AR_TILDATO = Utility::fixDateFormat(Constants::DATE_AUTO_END);
+					$this->logger->log($this->XMLfilename, "AR_ARKIV (" . $result['ARKIV'] . ") has null value for AR.TILDATO. Setting AR.TILDATO to Constants::DATE_AUTO_END which has value (". Constants::DATE_AUTO_END.  ")", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
+					
 				$arkiv->AR_MERKNAD = $result['MERKNAD'];
 
 				$this->writeToDestination($arkiv);

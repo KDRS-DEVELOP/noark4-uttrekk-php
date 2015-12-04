@@ -3,12 +3,16 @@
 require_once 'EarkKode.php';
 require_once 'models/Noark4Base.php';
 require_once 'utility/Constants.php';
+require_once 'models/EmneOrdDAO.php';
 
 class EarkKodeDAO extends Noark4Base {
-	
+
+	protected $emneOrd;	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('EARKKODE'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 		$this->selectQuery = "select EKODE, STIKKORD FROM " . $SRC_TABLE_NAME . "";
+
+		$this->emneOrd = new EmneOrdDAO($srcBase, $uttrekksBase, "UNKNOWN", $logger);
 	} 
 	
 	function processTable () {
@@ -46,6 +50,8 @@ class EarkKodeDAO extends Noark4Base {
 			if (strlen( $earkKode->EA_ORD) > 70) {
 				$this->logger->log($this->XMLfilename, "Data loss EA_ORD (" . $earkKode->EA_ORD. ") is greater than Noark 4 stanard 70  char length ", Constants::LOG_ERROR);	
 			}
+
+			$this->emneOrd->addEmneOrd($earkKode->EA_ORD);
 
 			$this->writeToDestination($earkKode);
 		}

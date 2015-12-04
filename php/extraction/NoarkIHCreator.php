@@ -17,10 +17,19 @@ class NoarkIHCreator {
 	var $selectRowCountQuery = "Select count(*) AS TOTAL from ";
 	var $exportInfo = null;
 
+	var $colsToIgnore = array("SA_BEVTID", "SA_KASSKODE", "SA_KASSDATO", "SA_PROSJEKT", "SA_PRES", "SA_FRARKDEL","MD_AGDATO", "MD_AGKODE", "MD_BEVTID", "MD_KASSDATO", "MD_KASSKODE", "AI_ADMKORT", "AI_IDFAR", "TK_FRADATO");	
+
+   
+
+ 
 	public function NoarkIHCreator  ($uttrekksBase, $outputDir, $exportInfo) {		
 		$this->uttrekksBase = $uttrekksBase;	
 		$this->outputDir = $outputDir;
 		$this->exportInfo = $exportInfo;
+
+
+
+
 	} 
 
 	public function  generateNoarkIH () {		
@@ -59,8 +68,16 @@ class NoarkIHCreator {
 			while ($tableDetails = mysql_fetch_assoc($resultHandleForTables)) {
 				
 				fwrite($fh, "\t<TABELLINFO>\n");
-				$tablename = $tableDetails["Tables_in_Noark4"];
-				$columnQuery = $this->selectColsQuery . " " . $tablename;
+
+				$tablenamePre = $tableDetails["Tables_in_Noark4"];
+				$tablename = Constants::mapTablenamesForNOARKIH($tablenamePre); 
+				echo $tablename . " " . $tablenamePre . "\n";
+				// Argh!! Why must the standard be so akward and require me to do this!!!
+				if (is_null($tablename) == true) {
+					$tablename = $tablenamePre;
+				}
+
+				$columnQuery = $this->selectColsQuery . " " . $tablenamePre;
 	
 				$tablenameLine = "\t\t<TI.TABELL>" . $tablename . "</TI.TABELL>\n";
 				fwrite($fh, $tablenameLine );
@@ -70,7 +87,10 @@ class NoarkIHCreator {
 				while ($columnDetails = mysql_fetch_assoc($resultHandleForColumns)) {
 					$columnName= str_replace("_", ".", $columnDetails["Field"]);
 					$attributeLine = "\t\t\t<TI.ATTR>" . $columnName . "</TI.ATTR>\n";
-					fwrite($fh, $attributeLine);
+
+					if (isset($colsToIgnore[$columnDetails["Field"]]) == false) {
+						fwrite($fh, $attributeLine);
+					}
 				}
 				fwrite($fh, "\t\t</ATTRIBUTTER>\n");
 				// This codebase only loads everything in one file. I guess this requirement
@@ -79,12 +99,12 @@ class NoarkIHCreator {
 				mysql_free_result($resultHandleForColumns);
 	
 
-				$noarkXmlFileName = Constants::getXMLFilename($tablename);
+				$noarkXmlFileName = Constants::getXMLFilename($tablenamePre);
 				fwrite($fh, "\t\t<FIL>\n");
 				$noark4fileNameLine = "\t\t\t<TI.FILNAVN>". $noarkXmlFileName. "</TI.FILNAVN>\n";
 				fwrite($fh, $noark4fileNameLine);
 
-				$rowCountQuery = $this->selectRowCountQuery . $tablename;				
+				$rowCountQuery = $this->selectRowCountQuery . $tablenamePre;				
 				$resultHandleForRowCount = $this->uttrekksBase->executeQueryFetchResultHandle ($rowCountQuery);
 				$rowCountDetails = mysql_fetch_assoc($resultHandleForRowCount);
 				$numberOfRecords = $rowCountDetails ["TOTAL"];			
@@ -104,8 +124,6 @@ class NoarkIHCreator {
 		else
 			echo "Error opening file " . $outputFileName . "\n";
 	} // function
-
-
 }
 
 

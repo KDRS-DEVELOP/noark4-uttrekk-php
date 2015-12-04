@@ -3,7 +3,7 @@
 require_once 'models/UtDokTyp.php';
 require_once 'models/Noark4Base.php';
 
-class UtvDokTypeDAO extends Noark4Base {
+class UtDokTypDAO extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('UTDOKTYP'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
@@ -12,6 +12,23 @@ class UtvDokTypeDAO extends Noark4Base {
 	function processTable () {
 
 
+			$utDokType = new UtDokTyp();
+			$utDokType->DU_KODE = 'RL';
+			$utDokType->DU_BETEGN = 'RSL - Møteinkalling';
+			$this->writeToDestination($utDokType);
+			$this->logger->log($this->XMLfilename, "DU.KODE, DU_BETEGN values not specified, added by script. Value pair added is  ( " . $utDokType->DU_KODE . ", " . $utDokType->DU_BETEGN . ")", Constants::LOG_WARNING);
+
+			$utDokType = new UtDokTyp();
+			$utDokType->DU_KODE = 'RO';
+			$utDokType->DU_BETEGN = 'RSO - offentlig saksliste';
+			$this->writeToDestination($utDokType);
+			$this->logger->log($this->XMLfilename, "DU.KODE, DU_BETEGN values not specified, added by script. Value pair added is  ( " . $utDokType->DU_KODE . ", " . $utDokType->DU_BETEGN . ")", Constants::LOG_WARNING);
+
+			$utDokType = new UtDokTyp();
+			$utDokType->DU_KODE = 'RB';
+			$utDokType->DU_BETEGN = 'RMB - saksliste';
+			$this->writeToDestination($utDokType);
+			$this->logger->log($this->XMLfilename, "DU.KODE, DU_BETEGN values not specified, added by script. Value pair added is  ( " . $utDokType->DU_KODE . ", " . $utDokType->DU_BETEGN . ")", Constants::LOG_WARNING);
 
 			$utDokType = new UtDokTyp();
 			$utDokType->DU_KODE = 'DO';

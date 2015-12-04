@@ -13,18 +13,30 @@ class UtvalgDAO extends Noark4Base {
 	
 	function processTable () {
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
-		
+
+
+
+		// This utvalg is created to handle the cases where UTVID is null in DGMAMO
+		$utvalg = new Utvalg();
+		$utvalg->UT_ID = '0';
+		$utvalg->UT_KODE = 'UKT';
+		$utvalg->UT_NAVN = 'UKJENT UTVALG';		
+		$utvalg->UT_ADMID = '0';						
+		$utvalg->UT_MONUMSER = "0";
+		$this->logger->log($this->XMLfilename, "UT.ID with value 0 added to handle UTVMOTE where UTVID is null" , Constants::LOG_WARNING);	
+		$this->warningIssued = true;		
+		$this->writeToDestination($utvalg);		
+
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$utvalg = new Utvalg();
 				$utvalg->UT_ID = $result['ID'];
 				$utvalg->UT_KODE = $result['UTV'];
 				$utvalg->UT_NAVN = $result['UTVALG'];
 				
-				
-				if ($result['AVD'] == null)
-					$utvalg->UT_ADMID = '0';
-				else 
-					$utvalg->UT_ADMID = $result['AVD'];
+				$utvalg->UT_ADMID = '0';				
+				$this->logger->log($this->XMLfilename, "For UT.ID (" . $result['ID'] .  "), UT_ADMID has no value, not in table. Setting to 0" , Constants::LOG_WARNING);	
+				$this->warningIssued = true;
+
 				
 				$utvalg->UT_ARKDEL = $result['FYSARK'];
 				if ($result['FUNKTIL'] != null)
@@ -32,6 +44,7 @@ class UtvalgDAO extends Noark4Base {
 
 				$utvalg->UT_MONUMSER = "0";
 				$this->logger->log($this->XMLfilename, "NUMSER foreign key relationship missing. MONUMSER required value. Added  MONUMSER  value  = 0" , Constants::LOG_ERROR);	
+				$this->errorIssued = true;
 				
 				$this->writeToDestination($utvalg);
 		}
@@ -55,6 +68,7 @@ class UtvalgDAO extends Noark4Base {
 		$this->uttrekksBase->executeStatement($sqlInsertStatement);
 
 	}
+
 	function createXML($extractor) {    
 		$sqlQuery = "SELECT * FROM UTVALG";
 		$mapping = array ('idColumn' => 'ut_id', 
@@ -65,10 +79,10 @@ class UtvalgDAO extends Noark4Base {
 								'UT.ID' => 'ut_id',
 								'UT.KODE' => 'ut_kode',
 								'UT.NAVN' => 'ut_navn',
-								'UT.MONUMSER' => 'ut_monumser',
 								'UT.ADMID' => 'ut_admid',
+								'UT.NEDLAGT' => 'ut_nedlagt',
 								'UT.ARKDEL' => 'ut_arkdel',
-								'UT.NEDLAGT' => 'ut_nedlagt'
+								'UT.MONUMSER' => 'ut_monumser'
 								) 
 							) ;
 			

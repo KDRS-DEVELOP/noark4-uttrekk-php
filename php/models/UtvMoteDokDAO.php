@@ -19,7 +19,7 @@ class UtvMoteDokDAO extends Noark4Base {
 
 	function processUtvMoteDok($utvID, $moID, $sakID) {
 
-		$selectJPQuery = "SELECT DOKKAT, REGDATO, STATUS, EKODE1, PAPIR, INNH1, U1, ADMID, SBHID, UNNTOFF, GRUPPEID, HJEMMEL FROM DGJMJO WHERE JOURAARNR = '" . $sakID . "'"; ;
+		$selectJPQuery = "SELECT DOKKAT, DOKODE, REGDATO, STATUS, EKODE1, PAPIR, INNH1, U1, ADMID, SBHID, UNNTOFF, GRUPPEID, HJEMMEL FROM DGJMJO WHERE JOURAARNR = '" . $sakID . "'"; ;
 		$this->srcBase->createAndExecuteQuery ($selectJPQuery);
 
 		while (($result = $this->srcBase->getQueryResult ($selectJPQuery))) {
@@ -29,8 +29,8 @@ class UtvMoteDokDAO extends Noark4Base {
 			$utvMoteDok->MD_ID = $this->docCounter; // auto-increment, starts at 1
 			$utvMoteDok->MD_UTVID = $utvID; // dgmamo.utvid
 			$utvMoteDok->MD_MOID = $moID;  // dgmamo.id
-			$utvMoteDok->MD_DOKTYPE = $result['DOKKAT']; // dgjmjo.dokkat
-			$utvMoteDok->MD_REGDATO = $result['REGDATO']; // dgjmjo.regdato
+			$utvMoteDok->MD_DOKTYPE = $result['DOKODE']; // dgjmjo.dokkat
+			$utvMoteDok->MD_REGDATO = Utility::fixDateFormat($result['REGDATO']); // dgjmjo.regdato
 			$utvMoteDok->MD_STATUS = $result['STATUS']; // dgjmjo.status
 			$utvMoteDok->MD_ARKKODE = $result['EKODE1']; // dgjmjo.ekode1 / AVGRADER???
 			$utvMoteDok->MD_PAPIRDOK = $result['PAPIR']; // dgjmjo.papir checklogic
@@ -98,6 +98,7 @@ class UtvMoteDokDAO extends Noark4Base {
 		$mapping = array ('idColumn' => 'MD.ID', 
 					'rootTag' => 'UTVMOTEDOK.TAB',	
 						'rowTag' => 'UTVMOTEDOK',
+						'fileName' => 'UTVMDOK',
 							'encoder' => 'utf8_decode',
 							'elements' => array(
 										'MD.ID' => 'md_id',

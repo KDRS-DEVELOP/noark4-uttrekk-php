@@ -28,7 +28,7 @@ class UtvBehStatDAO extends Noark4Base {
 				$utvBehStat->BS_BEHANDLET = '0';
 				$this->logger->log($this->XMLfilename, "Required information missing BS.BEHANDLET set to 0" , Constants::LOG_WARNING);
 				
-				$utvBehStat->BS_SORT1 = $result['BSTATUS'];
+				$utvBehStat->BS_SORT1 = '123';
 				$this->logger->log($this->XMLfilename, "Required information missing BS.SORT1 set to 0" , Constants::LOG_WARNING);
 
 				$utvBehStat->BS_KANSKART = '0';
@@ -56,20 +56,21 @@ class UtvBehStatDAO extends Noark4Base {
 		$this->uttrekksBase->executeStatement($sqlInsertStatement);
 
     }
-    
-    
+
+
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVBEHSTAT";
     	$mapping = array ('idColumn' => 'bs_status', 
   				'rootTag' => 'UTVBEHSTAT.TAB',	
 			    		'rowTag' => 'UTVBEHSTAT',
+					'fileName' => 'UTVBEHST',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'BS.STATUS' => 'bs_status',
 							'BS.BETEGN' => 'bs_betegn',
 							'BS.KOLISTE' => 'bs_koliste',
-							'BS.SAKSKART' => 'bs_sakskart',
 							'BS.KANSKART' => 'bs_kanskart',
+							'BS.SAKSKART' => 'bs_sakskart',
 							'BS.BEHANDLET' => 'bs_behandlet',
 							'BS.SORT1' => 'bs_sort1'
   							) 

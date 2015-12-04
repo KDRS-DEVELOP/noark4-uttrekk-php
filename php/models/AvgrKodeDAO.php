@@ -39,8 +39,8 @@ class AvgrKodeDAO extends Noark4Base {
  	function createXML($extractor) {    
 		$sqlQuery = "SELECT * FROM AVGRKODE";
 		$mapping = array ('idColumn' => 'ag_kode', 
-					'rootTag' => 'AVGRKODE.TAB',	
-						'rowTag' => 'AVGRKODE',
+					'rootTag' => 'AVGRADKODE.TAB',	
+						'rowTag' => 'AVGRADKODE',
 							'encoder' => 'utf8_decode',
 								'elements' => array(
 									'AG.KODE' => 'ag_kode',

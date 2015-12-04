@@ -39,14 +39,16 @@ class TggrpDAO extends Noark4Base {
 
 
 				if (is_null($result['FRADATO'])){
-					$this->logger->log($this->XMLfilename, "TG_FRADATO is null for TG_GRUPPNAVN (" . $tggrp->TG_GRUPPNAVN . ") setting it to unkown date " . Constants::UNKNOWN_DATE, Constants::LOG_WARNING);
+					$this->logger->log($this->XMLfilename, "TG_FRADATO is null for TG_GRUPPNAVN (" . $tggrp->TG_GRUPPNAVN . ") setting it to unkown date " . Constants::DATE_AUTO_START, Constants::LOG_WARNING);
+					$tggrp->TG_FRADATO = Utility::fixDateFormat(Constants::DATE_AUTO_START);
 				}
 				else {
-					$tggrp->TG_FRADATO = Utility::fixDateFormat($result['FRADATO']);				
+					$tggrp->TG_FRADATO = Utility::fixDateFormat($result['FRADATO']);
 				}						
 				
 				if (is_null($result['TILDATO'])){
-					$this->logger->log($this->XMLfilename, "TG_TILDATO is null for TG_GRUPPNAVN (" . $tggrp->TG_GRUPPNAVN . ") setting it to unkown date " . Constants::UNKNOWN_DATE, Constants::LOG_WARNING);
+					$this->logger->log($this->XMLfilename, "TG_TILDATO is null for TG_GRUPPNAVN (" . $tggrp->TG_GRUPPNAVN . ") setting it to unkown date " . Constants::DATE_AUTO_END, Constants::LOG_WARNING);
+					$tggrp->TG_TILDATO = Utility::fixDateFormat(Constants::DATE_AUTO_END);
 				}
 				else {
 					$tggrp->TG_TILDATO = Utility::fixDateFormat($result['TILDATO']);
@@ -80,18 +82,17 @@ class TggrpDAO extends Noark4Base {
 
 
     }  
-    
-    
+
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM TGGRP";
     	$mapping = array ('idColumn' => 'tg_gruppnavn', 
-  				'rootTag' => 'TGGRUPE.TAB',	
-			    		'rowTag' => 'TGGRUPE',
+  				'rootTag' => 'TGGRUPPE.TAB',	
+			    		'rowTag' => 'TGGRUPPE',
   						'encoder' => 'utf8_decode',
 							'elements' => array(
+								'TG.GRUPPEID' => 'tg_gruppeid',
 								'TG.GRUPPNAVN' => 'tg_gruppnavn',
 								'TG.GENERELL' => 'tg_generell',
-								'TG.GRUPPEID' => 'tg_gruppeid',
 								'TG.OPPRAV' => 'tg_opprav',
 								'TG.FRADATO' => 'tg_fradato',
 								'TG.TILDATO' => 'tg_tildato'

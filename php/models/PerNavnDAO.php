@@ -13,6 +13,22 @@ class PerNavnDAO extends Noark4Base {
 	function processTable () {
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
 
+		$perNavn = new PerNavn();
+		$perNavn->PN_ID = Constants::INGENBRUKER_ID;
+		$perNavn->PN_PEID = Constants::INGENBRUKER_ID;
+		$perNavn->PN_AKTIV = "1";
+		$perNavn->PN_INIT = "IBK";
+		$perNavn->PN_NAVN = "INGEN BRUKER";
+		$perNavn->PN_ENAVN = "BRUKER";
+		$perNavn->PN_FORNAVN = "INGEN";
+		$perNavn->PE_FRADATO = Constants::DATE_AUTO_START;
+		$perNavn->PE_TILDATO = Constants::DATE_AUTO_END;
+
+		$this->logger->log($this->XMLfilename, "Creating a PERNANVN with  PN_ID (" . Constants::INGENBRUKER_ID. ") to be used where we need a PERNAVN identifier but it's missing in the database", Constants::LOG_WARNING);
+		$this->warningIssued = true;
+		$this->writeToDestination($perNavn);
+
+
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$perNavn = new PerNavn();
 				$perNavn->PN_ID = $result['ID'];
@@ -22,8 +38,8 @@ class PerNavnDAO extends Noark4Base {
 				$perNavn->PN_NAVN = $result['FULLTNAVN'];
 				$perNavn->PN_ENAVN = $result['ETTERNAVN'];
 				$perNavn->PN_FORNAVN = $result['FORNAVN'];
-				$perNavn->PE_FRADATO = Utility::fixDateFormat($result['DATO']);
-				$perNavn->PE_TILDATO = Utility::fixDateFormat($result['TILDATO']);
+				$perNavn->PN_FRADATO = Utility::fixDateFormat($result['DATO']);
+				$perNavn->PN_TILDATO = Utility::fixDateFormat($result['TILDATO']);
 				
 				$this->writeToDestination($perNavn);
 		}
@@ -63,8 +79,8 @@ class PerNavnDAO extends Noark4Base {
 								'PN.AKTIV' => 'pn_aktiv',
 								'PN.INIT' => 'pn_init',
 								'PN.NAVN' => 'pn_navn',
-								'PN.ENAVN' => 'pn_enavn',
 								'PN.FORNAVN' => 'pn_fornavn',
+								'PN.ENAVN' => 'pn_enavn',
 								'PN.FRADATO' => 'pn_fradato',
 								'PN.TILDATO' => 'pn_tildato'
 								) 

@@ -6,7 +6,7 @@ class Constants {
 
 	public static $xmlFileNames = array (
 		"ADMINDEL" => "ADMINDEL.XML",
-		"ADRADMENH" => "ADRADMENH.XML",
+		"ADRADMENH" => "ADRADMEN.XML",
 		"ADRESSEK" => "ADRESSEK.XML",
 		"ADRPERS" => "ADRPERS.XML",
 		"ADRTYPE" => "ADRTYPE.XML",
@@ -28,10 +28,11 @@ class Constants {
 		"DOKVERS" => "DOKVERS.XML",
 		"EARKKODE" => "EARKKODE.XML",
 		"ENHTYPE" => "ENHTYPE.XML",
+		"EMNEORD" => "EMNEORD.XML",
 		"FORSMATE" => "FORSMATE.XML",
 		"FSTATUS" => "FSTATUS.XML",
 		"INFOTYPE" => "INFOTYPE.XML",
-		"JENARKDEL" => "JENARKDEL.XML",
+		"JENARKD" => "JENARKD.XML",
 		"JOURNENH" => "JOURNENH.XML",
 		"JOURNPST" => "JOURNPST.XML",
 		"JOURNSTA" => "JOURNSTA.XML",
@@ -67,11 +68,11 @@ class Constants {
 		"UTVALG" => "UTVALG.XML",
 		"UTVBEH" => "UTVBEH.XML",
 		"UTVBEHDO" => "UTVBEHDO.XML",
-		"UTVBEHSTAT" => "UTVBEHSTAT.XML",
+		"UTVBEHSTAT" => "UTVBEHST.XML",
 		"UTVMEDL" => "UTVMEDL.XML",
 		"UTVMEDLF" => "UTVMEDLF.XML",
 		"UTVMOTE" => "UTVMOTE.XML",
-		"UTVMOTEDOK" => "UTVMOTEDOK.XML",
+		"UTVMOTEDOK" => "UTVMDOK.XML",
 		"UTVSAK" => "UTVSAK.XML",
 		"UTVSAKTY" => "UTVSAKTY.XML",
 		"VARFORM" => "VARFORM.XML"
@@ -110,10 +111,73 @@ class Constants {
 		);
 	}
 
+
+	public static function mapTablenamesForNOARKIH($input) {
+
+	// Yes this wil lcost perfromance wise, but I need to finish!!!
+
+	$mapNames = array("UTVBEHDO" => "UTVBEHDOK",
+				"UTVMEDL" => "UTVMEDLEM",
+				"UTVMEDLF" => "UTVMEDLFUNK",
+				"UTVSAK" => "UTVALGSAK", 
+				"UTVSAKTY" => "UTVSAKTYP",
+				"VARFORM" => "VARIANTFORMAT",
+				"ARKIVPER" => "ARKIVPERIODE",
+				"AVGRKODE" => "AVGRADKODE",
+				"AVSKRM" => "AVSKRMAATE",
+				"DOKBESK" => "DOKBESKRIV",
+				"DOKKAT" => "DOKKATEGORI",
+				"DOKSTAT" => "DOKSTATUS",
+				"DOKTYPE" => "NOARKDOKTYPE",
+				"DOKVERS" => "DOKVERSJON",
+				"ENHTYPE" => "ENHETSTYPE",
+				"FORSMATE" => "FORSMAATE",
+				"ADRESSEK" => "ADRESSEKP",
+				"JENARKD" => "JENARKDEL",
+				"JOURNENH" => "JOURNENHET",
+				"JOURNPST" => "JOURNPOST",
+				"JOURNSTA" => "JOURNSTATUS",
+				"KLASS" => "KLASSERING",
+				"LAGRENH" => "LAGRENHET",
+				"LAGRFORM" => "LAGRFORMAT",
+				"MEDADRGR" => "MEDLADRGR",
+				"ADRPERS" => "ADRPERSON",
+				"OPRITYP" => "ORDNPRINSTYPE",
+				"ORDNPRI" => "ORDNPRINS",
+				"ORDNVERD" => "ORDNVERDI",
+				"PERKLAR" => "PERKLARER",
+				"POLSAKG" => "POLSAKSGANG",
+				"SAKPART" => "SAKSPART",
+				"SAKSTAT" => "SAKSTATUS",
+				"SAKTYPE" => "SAKSTYPE",
+				"STATMDOK" => "STATUSMDOK",
+				"TGGRP" => "TGGRUPPE",
+				"TGHJEM" => "TGHJEMMEL",
+				"ALIASADM" => "ALIASADMENH",
+				"TILLEGG" => "TILLEGGSINFO",
+				"UTVBEH" => "UTVBEHANDLING",
+				"UTVBEHDO" => "UTVBEHDOK",
+				"EMNEORD" => "EMNEORD",
+				"JENARKDEL" => "JENARKDEL"
+			);
+
+		
+		if (isset($mapNames[$input]) == true) {
+			return $mapNames[$input];
+		}
+		else 
+			return $input;
+	
+	}
+
+
+	const JOURNENHET_MISSING = 'ING';
 	const ADMININDEL_TOPNIVA = '0';
 	const NEWLINE = "\n";
 	const XML_ENCODING = "UTF-8";
-	const JP_STRING_LENGTH = 8;
+	const REFNR_JP_STRING_LENGTH = 6; //6
+	const REFNR_SAK_STRING_LENGTH = 5; //5
+	const JP_STRING_LENGTH = 8; //8
 	const SAK_STRING_LENGTH = 8; 
 	const INGENBRUKER_ID = '0';
 	const UTTREKSBRUKER_ID = '1';
@@ -127,8 +191,9 @@ class Constants {
 	const LOG_WARNING = "WARNING";
 	const LOG_ERROR = "ERROR";
 	const UNKNOWN_DATE = "1000-01-01"; 
-	const DATE_AUTO_END = "2012-01-13"; // Things that aren't finished need a date that it's finished. Use this value to set a date 
-
+	const DATE_AUTO_END = "12-JAN-13"; // Things that aren't finished need a date that it's finished. Use this value to set a date 
+	const DATE_AUTO_START = "01-DEC-98";
+	const DOKTYPE_IKKE_ANNGITT = "Q";
  
 
 }

@@ -43,6 +43,8 @@ class InfoTypeDAO extends Noark4Base {
 		$this->uttrekksBase->executeStatement($sqlInsertStatement);
     }  
 
+
+
   	function createXML($extractor) {    
 		$sqlQuery = "SELECT * FROM INFOTYPE";
 		$mapping = array ('idColumn' => 'it_kode', 
@@ -53,9 +55,9 @@ class InfoTypeDAO extends Noark4Base {
 									'IT.KODE' => 'it_kode',
 									'IT.BETEGN' => 'it_betegn',
 									'IT.LTEKST1' => 'it_ltekst1',
+									'IT.MERKNAD' => 'it_merknad',
 									'IT.AUTOLOG' => 'it_autolog',
-									'IT.OPPBETID' => 'it_oppbetid',
-									'IT.MERKNAD' => 'it_merknad'
+									'IT.OPPBETID' => 'it_oppbetid'
 									) 
 							) ;
 			

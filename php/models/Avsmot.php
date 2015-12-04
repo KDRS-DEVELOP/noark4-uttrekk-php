@@ -23,7 +23,6 @@ class Avsmot {
 	var $AM_EPOSTADR;
 	var $AM_FORSEND;
 	var $AM_REF;
-	var $AM_AVSKMET;
-	var $AM_FSSTATUS;	
+	var $AM_AVSKMET;	
 }
 

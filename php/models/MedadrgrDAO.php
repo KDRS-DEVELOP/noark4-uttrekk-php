@@ -2,12 +2,21 @@
 
 require_once 'models/Medadrgr.php';
 require_once 'models/Noark4Base.php';
+/*
+
+<MEDLADRGR>
+   <MG.GRID>403</MG.GRID>
+  </MEDLADRGR>
+
+*/
+
+
 
 class MedAdrGrDAO extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('MEDADRGR'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
-		$this->selectQuery = "select ADRID, GRUPPEID from " . $SRC_TABLE_NAME . "";
+		$this->selectQuery = "select ADRID, GRUPPEID, UNAVN from " . $SRC_TABLE_NAME . "";
 	} 
 	
 	function processTable () {
@@ -20,7 +29,13 @@ class MedAdrGrDAO extends Noark4Base {
 				$medAdrgr->MG_GRID = $result['ADRID'];
 				$medAdrgr->MG_MEDLID = $result['GRUPPEID'];
 
-				$this->writeToDestination($medAdrgr);
+				if (isset($result['ADRID']) == true && isset($result['GRUPPEID'])) {
+					$this->writeToDestination($medAdrgr);
+				}
+				else {
+					$this->logger->log($this->XMLfilename, "One of MG_GRID (" . $result['ADRID'] . ") and  (" . $result['ADRID'] . ") is null. These values are ignored in the extraction. In ESA additional field UNANV contains " . $result['UNAVN'], Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
 		}
 		$this->srcBase->endQuery($this->selectQuery);
 	}
@@ -49,8 +64,8 @@ class MedAdrGrDAO extends Noark4Base {
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM MEDADRGR";
     	$mapping = array ('idColumn' => 'mg_grid', 
-  				'rootTag' => 'MEDADRGR.TAB',	
-			    		'rowTag' => 'MEDADRGR',
+  				'rootTag' => 'MEDLADRGR.TAB',	
+			    		'rowTag' => 'MEDLADRGR',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'MG.GRID' => 'mg_grid',

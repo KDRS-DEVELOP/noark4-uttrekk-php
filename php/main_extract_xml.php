@@ -151,7 +151,7 @@
 	$uttrekkMySQLBase = null;
 	
 	try {
-		$srcBase = new SrcBase($src_db_host, $src_db_port, $src_db_name, $src_db_user, $src_db_pswd, $src_db_sid);
+//		$srcBase = new SrcBase($src_db_host, $src_db_port, $src_db_name, $src_db_user, $src_db_pswd, $src_db_sid);
 		$uttrekkMySQLBase = new UtrekkMySQLBase($uttrekk_db_host, $uttrekk_db_user, $uttrekk_db_pswd, $uttrekk_db_database);
 	}
 	catch (Exception $e)
@@ -159,10 +159,6 @@
 		echo $e->getMessage();
 	}
 	
-	if ($srcBase == null) {
-		echo "Problem med kobling til kildebasen\n";
-		return;
-	}
 	
 	if ($uttrekkMySQLBase == null) {
 		echo "Problem med kobling til Uttrekksbasen\n";
@@ -182,10 +178,10 @@
 	
 	echo "\nSlettet gamle filer (hvis de eksisterte) og oppretter mappe for uttrekk ($uttrekkDirectory) \n";
 	
-	$noark4DatabaseStruktur = new Noark4DatabaseStruktur();
+	//$noark4DatabaseStruktur = new Noark4DatabaseStruktur();
 
 	// Temporary commented out as it takes to long to rebuild everything
-			
+			/*
 	// Noe administrativt arbeid først, slett databasen om den eksisterer, lag en ny tom en og lag alle tabellene
 	echo "Sletter MySQL midlertidig Noark 4 base. Resultatet er (";
 	$val = $uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->deleteDatabaseStatement($uttrekk_db_database));
@@ -195,14 +191,10 @@
 	echo ($val == true  ? 'OK' : 'Feil' ) . ");\n";
 	
 	$uttrekkMySQLBase->setDefaultDatabase();
-	
-	
-	$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->deleteDatabaseStatement($uttrekk_db_database));
-	$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createDatabaseStatement($uttrekk_db_database));
-
+*/
 	$uttrekkMySQLBase->setDefaultDatabase();
 	
-	createNoark4DBStructure ($uttrekkMySQLBase, $noark4DatabaseStruktur);
+	//createNoark4DBStructure ($uttrekkMySQLBase, $noark4DatabaseStruktur);
 	
 
 	
@@ -219,121 +211,115 @@
 	//Tables are processed in an order that ensures Relational dependancy is not broken  
 
 
+	$tgInfoDAO = new TginfoDAO($srcBase, $uttrekkMySQLBase, $table_names['TGINFO_TABLE'], $logger);
+	$tgKodeDAO = new TgkodeDAO($srcBase, $uttrekkMySQLBase, $table_names['TGKODE_TABLE'], $logger);
+	$tgHjemDAO = new TghjemDAO($srcBase, $uttrekkMySQLBase, $table_names['TGHJEM_TABLE'], $logger);
 
-//	$tablesToTruncate = array(/*'DOKBESK', 'DOKLINK', 'DOKVERS', 'JOURNPST',*/ 'POLSAKG', 'UTVALG', 'UTVMEDL', 'UTVMOTEDOK', 'UTVMOTE', 'UTVSAK', 'UTVBEH', 'UTVBEHDO');
-
-
-	//foreach ($tablesToTruncate as $table) {
-	//	$SQLStatement = "TRUNCATE " . $table . "; ";
-	//	$uttrekkMySQLBase->executeStatement($SQLStatement);
-	//	echo $SQLStatement . "\n";
-	//}
-
-
+	$postnrDAO = new PostnrDAO($srcBase, $uttrekkMySQLBase, $table_names['POSTNR_TABLE'], $logger);
 	
-	$tgInfoDAO = handleTGINFO($srcBase, $uttrekkMySQLBase, $table_names['TGINFO_TABLE'], $logger);
-	$tgKodeDAO = handleTGKODE($srcBase, $uttrekkMySQLBase, $table_names['TGKODE_TABLE'], $logger);
-	$tgHjemDAO = handleTGHJEM($srcBase, $uttrekkMySQLBase, $table_names['TGHJEM_TABLE'], $logger);
-
-	$postnrDAO = handlePOSTNR($srcBase, $uttrekkMySQLBase, $table_names['POSTNR_TABLE'], $logger);
-	
-	$earkKode = handleEARKKODE($srcBase, $uttrekkMySQLBase, $table_names['EARKKODE_TABLE'], $logger);
+	$earkKode = new EarkKodeDAO($srcBase, $uttrekkMySQLBase, $table_names['EARKKODE_TABLE'], $logger);
 	$emneOrdDAO = new EmneOrdDAO($srcBase, $uttrekkMySQLBase, 'UNKNOWN', $logger);
 
-	$adrTypeDAO = handleADRTYPE($srcBase, $uttrekkMySQLBase, $table_names['ADRTYPE_TABLE'], $logger);
-	$adressekpDAO = handleADRESSEKP($srcBase, $uttrekkMySQLBase, $table_names['ADRESSEKP_TABLE'], $logger);
+	$adrTypeDAO = new AdrTypeDAO($srcBase, $uttrekkMySQLBase, $table_names['ADRTYPE_TABLE'], $logger);
+	$adressekpDAO = new AdressekpDAO($srcBase, $uttrekkMySQLBase, $table_names['ADRESSEKP_TABLE'], $logger);
 		
-	$adminDelDAO = handleADMINDEL($srcBase, $uttrekkMySQLBase, $table_names['ADMINDEL_TABLE'], $logger);
-	$avgrKodeDAO = handleAVGRKODE($srcBase, $uttrekkMySQLBase, $table_names['AVGRKODE_TABLE'], $logger);
-	$avskrmDAO = handleAVSKRM($srcBase, $uttrekkMySQLBase, $table_names['AVSKRM_TABLE'], $logger);
-	$dokkatDAO = handleDOKKAT($srcBase, $uttrekkMySQLBase, $table_names['DOKKAT_TABLE'], $logger);
-	$dokstatDAO = handleDOKSTAT($srcBase, $uttrekkMySQLBase, $table_names['DOKSTAT_TABLE'], $logger);
-	$dokTypeDAO = handleDOKTYPE($srcBase, $uttrekkMySQLBase, $table_names['DOKTYPE_TABLE'], $logger);
-	$kassKodeDAO = handleKASSKODE($srcBase, $uttrekkMySQLBase, $table_names['KASSKODE_TABLE'], $logger);
-	$infoTypeDAO = handleINFOTYPE($srcBase, $uttrekkMySQLBase, $table_names['INFOTYPE_TABLE'], $logger);
-	$lagrFormDAO = handleLAGRFORM($srcBase, $uttrekkMySQLBase, $table_names['LAGRFORM_TABLE'], $logger);
-	$lagrEnhDAO = handleLAGRENH($srcBase, $uttrekkMySQLBase, $table_names['LAGRENH_TABLE'], $logger);
-	$personDAO = handlePERSON($srcBase, $uttrekkMySQLBase, $table_names['PERSON_TABLE'], $logger);
-	$perNavnDAO = handlePERNAVN($srcBase, $uttrekkMySQLBase, $table_names['PERNAVN_TABLE'], $logger);
+	$adminDelDAO = new AdminDelDAO($srcBase, $uttrekkMySQLBase, $table_names['ADMINDEL_TABLE'], $logger);
+	$avgrKodeDAO = new AvgrKodeDAO($srcBase, $uttrekkMySQLBase, $table_names['AVGRKODE_TABLE'], $logger);
+	$avskrmDAO = new AvskrmDAO($srcBase, $uttrekkMySQLBase, $table_names['AVSKRM_TABLE'], $logger);
+	$dokkatDAO = new DokkatDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKKAT_TABLE'], $logger);
+	$dokstatDAO = new DokstatDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKSTAT_TABLE'], $logger);
+	$dokTypeDAO = new DokTypeDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKTYPE_TABLE'], $logger);
+	$kassKodeDAO = new KassKodeDAO($srcBase, $uttrekkMySQLBase, $table_names['KASSKODE_TABLE'], $logger);
+	$infoTypeDAO = new InfoTypeDAO($srcBase, $uttrekkMySQLBase, $table_names['INFOTYPE_TABLE'], $logger);
+	$lagrFormDAO = new LagrFormDAO($srcBase, $uttrekkMySQLBase, $table_names['LAGRFORM_TABLE'], $logger);
+	$lagrEnhDAO = new LagrEnhDAO($srcBase, $uttrekkMySQLBase, $table_names['LAGRENH_TABLE'], $logger);
+	$personDAO = new PersonDAO($srcBase, $uttrekkMySQLBase, $table_names['PERSON_TABLE'], $logger);
+	$perNavnDAO = new PerNavnDAO($srcBase, $uttrekkMySQLBase, $table_names['PERNAVN_TABLE'], $logger);
 	
-	$fstatusDAO = handleFSTATUS($srcBase, $uttrekkMySQLBase, $table_names['FSTATUS_TABLE'], $logger);
-	$forsmateDAO = handleFORSMATE($srcBase, $uttrekkMySQLBase, $table_names['FORSMATE_TABLE'], $logger);
-	$sakStatDAO = handleSAKSTAT($srcBase, $uttrekkMySQLBase, $table_names['SAKSTAT_TABLE'], $logger);
-	$sakTypeDAO = handleSAKTYPE($srcBase, $uttrekkMySQLBase, $table_names['SAKTYPE_TABLE'], $logger);	
-	$varFromDAO = handleVARFORM($srcBase, $uttrekkMySQLBase, $table_names['VARFORM_TABLE'], $logger);
-	$opriTypDAO = handleOPRITYP($srcBase, $uttrekkMySQLBase, $table_names['OPRITYP_TABLE'], $logger);
-	$ordnpriDAO = handleORDNPRI($srcBase, $uttrekkMySQLBase, $table_names['ORDNPRI_TABLE'], $logger);
-	$ordVerdDAO = handleORDNVERD($srcBase, $uttrekkMySQLBase, $table_names['ORDNVERD_TABLE'], $logger);	
-	$journEnhDAO = handleJOURNENH($srcBase, $uttrekkMySQLBase, $table_names['JOURNENH_TABLE'], $logger);
-	$journStaDAO = handleJOURNSTA($srcBase, $uttrekkMySQLBase, $table_names['JOURNSTA_TABLE'], $logger);
-	$bskodeDAO = handleBSKODE($srcBase, $uttrekkMySQLBase, $table_names['BSKODE_TABLE'], $logger);
-	$numSerieDAO = handleNUMSERIE($srcBase, $uttrekkMySQLBase, $table_names['NUMSERIE_TABLE'], $logger);
-	$arkivDAO = handleARKIV($srcBase, $uttrekkMySQLBase, $table_names['ARKIV_TABLE'], $logger);
-	$arstatusDAO = handleARSTATUS($srcBase, $uttrekkMySQLBase, $table_names['ARSTATUS_TABLE'], $logger);
-	$arkivdelDAO = handleARKIVDEL($srcBase, $uttrekkMySQLBase, $table_names['ARKIVDEL_TABLE'], $logger);
-	$arkivperiodeDAO = handleARKIVPERIODE($srcBase, $uttrekkMySQLBase, $table_names['ARKIVPER_TABLE'], $logger);
-	$jenArkdDAO = handleJENARKD($srcBase, $uttrekkMySQLBase, $table_names['JENARKD_TABLE'], $logger);
-	$perRolleDAO = handlePERROLLE($srcBase, $uttrekkMySQLBase, $table_names['PERROLLE_TABLE'], $logger);
+	$fstatusDAO = new fstatusDAO($srcBase, $uttrekkMySQLBase, $table_names['FSTATUS_TABLE'], $logger);
+	$forsmateDAO = new ForsmateDAO($srcBase, $uttrekkMySQLBase, $table_names['FORSMATE_TABLE'], $logger);
+	$sakStatDAO = new SakStatDAO ($srcBase, $uttrekkMySQLBase, $table_names['SAKSTAT_TABLE'], $logger);
+	$sakTypeDAO = new SakTypeDAO($srcBase, $uttrekkMySQLBase, $table_names['SAKTYPE_TABLE'], $logger);	
 
 
-	$noarkSakDAO = handleNOARKSAK($srcBase, $uttrekkMySQLBase, $table_names['NOARKSAK_TABLE'], $logger, $ordVerdDAO, 
-					new MerknadDAO($srcBase, $uttrekkMySQLBase, $table_names['MERKNAD_TABLE'], $logger));
+	$varFromDAO = new VarFormDAO($srcBase, $uttrekkMySQLBase, $table_names['VARFORM_TABLE'], $logger);
+	$opriTypDAO = new OpriTypDAO($srcBase, $uttrekkMySQLBase, $table_names['OPRITYP_TABLE'], $logger);
+	$ordnpriDAO = new OrdnpriDAO($srcBase, $uttrekkMySQLBase, $table_names['ORDNPRI_TABLE'], $logger);
+
+	$ordVerdDAO = new OrdnVerdDAO($srcBase, $uttrekkMySQLBase, $table_names['ORDNVERD_TABLE'], $logger);	
+	$journEnhDAO = new JournEnhDAO($srcBase, $uttrekkMySQLBase, $table_names['JOURNENH_TABLE'], $logger);
+	$journStaDAO = new JournStaDAO($srcBase, $uttrekkMySQLBase, $table_names['JOURNSTA_TABLE'], $logger);
+	$bskodeDAO = new BskodeDAO($srcBase, $uttrekkMySQLBase, $table_names['BSKODE_TABLE'], $logger);
+	$numSerieDAO = new NumSerieDAO($srcBase, $uttrekkMySQLBase, $table_names['NUMSERIE_TABLE'], $logger);
+	$arkivDAO = new ArkivDAO($srcBase, $uttrekkMySQLBase, $table_names['ARKIV_TABLE'], $logger);
+	$arstatusDAO = new ArstatusDAO($srcBase, $uttrekkMySQLBase, $table_names['ARSTATUS_TABLE'], $logger);
+	$arkivdelDAO = new ArkivdelDAO($srcBase, $uttrekkMySQLBase, $table_names['ARKIVDEL_TABLE'], $logger);
+	$arkivperiodeDAO = new ArkivperiodeDAO($srcBase, $uttrekkMySQLBase, $table_names['ARKIVPER_TABLE'], $logger);
+	$jenArkdDAO = new JenArkdDAO($srcBase, $uttrekkMySQLBase, $table_names['JENARKD_TABLE'], $logger);
+	$perRolleDAO = new PerRolleDAO($srcBase, $uttrekkMySQLBase, $table_names['PERROLLE_TABLE'], $logger);
 	
-	$klassDAO = handleKLASS($srcBase, $uttrekkMySQLBase, $table_names['KLASS_TABLE'], $logger);
+	$merknadDAO = new MerknadDAO($srcBase, $uttrekkMySQLBase, $table_names['MERKNAD_TABLE'], $logger);
+
+		
+    $noarkSakDAO = new NoarkSakDAO($srcBase, $uttrekkMySQLBase, $table_names['NOARKSAK_TABLE'], $logger, $ordVerdDAO, $merknadDAO);
+
+
+	$klassDAO = new KlassDAO($srcBase, $uttrekkMySQLBase, $table_names['KLASS_TABLE'], $logger);
  
-	$merknadDAO = handleMERKNAD($srcBase, $uttrekkMySQLBase, $table_names['MERKNAD_TABLE'], $logger);
+	
 
-	$journPstDAO = handleJOURNPST($srcBase, $uttrekkMySQLBase, $table_names['JOURNPOST_TABLE'], $logger, $merknadDAO, $kommuneName);
+	$journPstDAO = new JournPstDAO ($srcBase, $uttrekkMySQLBase, $table_names['JOURNPOST_TABLE'], $logger, $merknadDAO, $kommuneName);
 
 	
 	
 	// after sak and JP do the MERKNAD
 //	$merknadDAO = handleMERKNAD($srcBase, $uttrekkMySQLBase, $table_names['MERKNAD_TABLE']);
 	
-	$tggrpDAO = handleTGGRP($srcBase, $uttrekkMySQLBase, $table_names['TGGRP_TABLE'], $logger);
-	$tgMedlemDAO = handleTGMEDLEM($srcBase, $uttrekkMySQLBase, $table_names['TGMEDLEM_TABLE'], $logger);
+	$tggrpDAO = new TggrpDAO($srcBase, $uttrekkMySQLBase, $table_names['TGGRP_TABLE'], $logger);
+	$tgMedlemDAO = new TgMedlemDAO($srcBase, $uttrekkMySQLBase, $table_names['TGMEDLEM_TABLE'], $logger);
 
-	$utvSakTyDAO = handleUTVSAKTY($srcBase, $uttrekkMySQLBase, $table_names['UTVSAKTY_TABLE'], $logger);
-	$utvBehStatDAO = handleUTVBEHSTAT($srcBase, $uttrekkMySQLBase, $table_names['UTVBEHSTAT_TABLE'], $logger);
-	$utvMedlFunkDAO = handleUTVMEDLF($srcBase, $uttrekkMySQLBase, $table_names['UTVMEDLFUNK_TABLE'], $logger);
-
-
-	$utvalgDAO = handleUTVALG($srcBase, $uttrekkMySQLBase, $table_names['UTVALG_TABLE'], $logger);
-
-	$utvMedlDAO = handleUTVMEDL($srcBase, $uttrekkMySQLBase, $table_names['UTVMEDL_TABLE'], $logger);
+	$utvSakTyDAO = new UtvSakTyDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVSAKTY_TABLE'], $logger);
+	$utvBehStatDAO = new UtvBehStatDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVBEHSTAT_TABLE'], $logger);
+	$utvMedlFunkDAO = new UtvMedlFunkDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVMEDLFUNK_TABLE'], $logger);
 
 
-	$adradmenhDAO = handleADRADMENH($srcBase, $uttrekkMySQLBase, $table_names['ADRADMENH_TABLE'], $logger);
+	$utvalgDAO = new UtvalgDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVALG_TABLE'], $logger);
 
-	$adrPersonDAO = handleADRPERSON($srcBase, $uttrekkMySQLBase, $table_names['ADRPERSON_TABLE'], $logger);
-	$aliasAdmDAO = handleALIASADM($srcBase, $uttrekkMySQLBase, $table_names['ALIASADM_TABLE'], $logger);
-	$avsmotDAO = handleAVSMOT($srcBase, $uttrekkMySQLBase, $table_names['AVSMOT_TABLE'], $logger);
-	$dokTilknDAO = handleDOKTILKN($srcBase, $uttrekkMySQLBase, $table_names['DOKTILKN_TABLE'], $logger);
-	$enhTypeDAO = handleENHTYPE($srcBase, $uttrekkMySQLBase, $table_names['ENHTYPE_TABLE'], $logger);
+	$utvMedlDAO = new UtvMedlDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVMEDL_TABLE'], $logger);
 
-	$medadrgrDAO = handleMEDADADRGR($srcBase, $uttrekkMySQLBase, $table_names['MEDADRGR_TABLE'], $logger);
+
+	$adradmenhDAO = new AdradmenhDAO($srcBase, $uttrekkMySQLBase, $table_names['ADRADMENH_TABLE'], $logger);
+
+	$adrPersonDAO = new AdrPersonDAO($srcBase, $uttrekkMySQLBase, $table_names['ADRPERSON_TABLE'], $logger);
+	$aliasAdmDAO = new AliasAdmDAO($srcBase, $uttrekkMySQLBase, $table_names['ALIASADM_TABLE'], $logger);
+	$avsmotDAO = new AvsmotDAO($srcBase, $uttrekkMySQLBase, $table_names['AVSMOT_TABLE'], $logger);
+	$dokTilknDAO = new DokTilknDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKTILKN_TABLE'], $logger);
+	$enhTypeDAO = new EnhTypeDAO($srcBase, $uttrekkMySQLBase, $table_names['ENHTYPE_TABLE'], $logger);
+
+	$medadrgrDAO = new MedadrgrDAO($srcBase, $uttrekkMySQLBase, $table_names['MEDADRGR_TABLE'], $logger);
 	//$perklarDAO = handlePERKLAR($srcBase, $uttrekkMySQLBase, $table_names['PERKLAR_TABLE'], $logger);
 	//$tilleggDAO =  handleTILLEGG($srcBase, $uttrekkMySQLBase, $table_names['TILLEGG_TABLE'], $logger);
 
-	$sakPartDAO = handleSAKPART($srcBase, $uttrekkMySQLBase, $table_names['SAKPART_TABLE'], $logger);
+	$sakPartDAO = new SakPartDAO($srcBase, $uttrekkMySQLBase, $table_names['SAKPART_TABLE'], $logger);
 
-	$statMDokDAO = handleSTATMDOK($srcBase, $uttrekkMySQLBase, $table_names['SAKPART_TABLE'], $logger);
-	$polsakgDAO = handlePOLSAKG($srcBase, $uttrekkMySQLBase, $table_names['POLSAKG_TABLE'], $logger);
-	$tlKodeDAO =  handleTLKODE($srcBase, $uttrekkMySQLBase, $table_names['TLKODE_TABLE'], $logger);
+	$statMDokDAO = new StatMDokDAO($srcBase, $uttrekkMySQLBase, $table_names['SAKPART_TABLE'], $logger);
+	$polsakgDAO = new PolsakgDAO($srcBase, $uttrekkMySQLBase, $table_names['POLSAKG_TABLE'], $logger);
+	$tlKodeDAO =  new TlKodeDAO($srcBase, $uttrekkMySQLBase, $table_names['TLKODE_TABLE'], $logger);
 	// dokLink / dokVers / dokBesk are handled inside JOURPST, Creating DAO objects
 	// only to create extraction to XML	
 	$dokVersDAO = new DokLinkDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKLINK_TABLE'], $kommuneName, $logger);
 	$dokLinkDAO = new DokVersDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKVERS_TABLE'], $kommuneName, $logger);
 	$dokBeskDAO = new DokBeskDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKBESK_TABLE'], $kommuneName, $logger);
 
-	$utDokTypDAO = handleUTDOKTYPE($srcBase, $uttrekkMySQLBase, $table_names['UTVDOKTYPE_TABLE'], $logger);
-	$utvMoteDAO = handleUTVMOTE($srcBase, $uttrekkMySQLBase, $table_names['UTVMOTE_TABLE'], $logger);
+
+$utDokTypDAO = new UtDokTypDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVDOKTYPE_TABLE'], $logger);
+	$utvMoteDAO = new UtvMoteDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVMOTE_TABLE'], $logger);
 
 	$utvMoteDokDAO = new UtvMoteDokDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVMOTEDOK_TABLE'], $logger);
 	$utvBehDoDAO = new UtvBehDoDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVBEHDO_TABLE'], $logger);
 	$utvSakDAO = new UtvSakDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVSAK_TABLE'], $logger, $utvBehDoDAO);
 
-	$utvBehDAO = handleUTVBEH($srcBase, $uttrekkMySQLBase, $table_names['UTVBEH_TABLE'], $logger, $utvSakDAO, $utvBehDoDAO);
+	$utvBehDAO = new UtvBehDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVBEH_TABLE'], $logger, $utvSakDAO, $utvBehDoDAO);
 	$emneOrdDAO = new EmneOrdDAO($srcBase, $uttrekkMySQLBase, 'UNKNOWN', $logger);
 	
 
@@ -1591,7 +1577,7 @@
 		echo "\t handling UTDOKTYPE ... ";
 		$logger->log("UTDOKTYPE.XML", "Started processing UTDOKTYPE(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
-		$utvDokTypeDAO = new UtDokTypDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
+		$utvDokTypeDAO = new UtvDokTypeDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
 		$utvDokTypeDAO->processTable();
 		$issues = $utvDokTypeDAO->getIssues();
 

@@ -145,14 +145,14 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " AD_PERIODE CHAR (2),";
 		$createStatement .= " AD_PRIMNOK CHAR (10),";
 		$createStatement .= " AD_BSKODE CHAR (2),";
-		$createStatement .= " AD_FORTS CHAR (10),";
+//		$createStatement .= " AD_FORTS CHAR (10),";
 		$createStatement .= " AD_PAPIR CHAR (1),";
 		$createStatement .= " AD_ELDOK CHAR (1),";
-		$createStatement .= " AD_NUMSER CHAR (10),";
+//		$createStatement .= " AD_NUMSER CHAR (10),";
 		$createStatement .= " AD_FRADATO CHAR (8),";
 		$createStatement .= " AD_TILDATO CHAR (8),";
-		$createStatement .= " AD_MERKNAD TEXT,";
-		$createStatement .= " AD_KONTRAV CHAR (10)";
+		$createStatement .= " AD_MERKNAD TEXT";
+//		$createStatement .= " AD_KONTRAV CHAR (10)";
 /*		$createStatement .= " FOREIGN KEY (AD_ASTATUS) REFERENCES ARSTATUS (AS_STATUS),";
 		$createStatement .= " FOREIGN KEY (AD_PRIMNOK) REFERENCES ORDNPRI (OP_ORDNPRI),";
 		$createStatement .= " FOREIGN KEY (AD_BSKODE) REFERENCES BSKODE (BK_KODE),";
@@ -168,12 +168,11 @@ class Noark4DatabaseStruktur  {
 
 		$createStatement .= " AP_ARKIV CHAR (10),";
 		$createStatement .= " AP_PERIODE CHAR (5) PRIMARY KEY,";
-		$createStatement .= " AP_STATUS CHAR (2),";
 		$createStatement .= " AP_FRADATO CHAR (8),";
 		$createStatement .= " AP_TILDATO CHAR (8),";
-		$createStatement .= " AP_MERKNAD TEXT,";
+		$createStatement .= " AP_MERKNAD TEXT";
 		
-		$createStatement .= " FOREIGN KEY (AP_STATUS) REFERENCES ARSTATUS (AS_STATUS)";
+//		$createStatement .= " FOREIGN KEY (AP_STATUS) REFERENCES ARSTATUS (AS_STATUS)";
 		
 		$createStatement .= ") engine = innodb; ";
 		return $createStatement;
@@ -240,9 +239,9 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " AM_AVSKDATO CHAR (8),";
 		$createStatement .= " AM_BESVAR CHAR (10),";
 		$createStatement .= " AM_FRIST CHAR (8),";
-		$createStatement .= " AM_FORSEND CHAR (10),";
+		$createStatement .= " AM_FORSEND CHAR (10)";
 		// $createStatement .= " AM_AVSKMET CHAR(),"; USIKKER OM DENNE SKAL VÆRE MED, IKKE i DTD eller Noark 4 - Del 2
-		$createStatement .= " AM_FSSTATUS CHAR(2)";
+
 /*
 		$createStatement .= " FOREIGN KEY (AM_JPID) REFERENCES JOURNPST (JP_ID),";
 		$createStatement .= " FOREIGN KEY (AM_KORTNAVN) REFERENCES ADRESSEK (AK_KORTNAVN),";			
@@ -277,7 +276,7 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " DB_KATEGORI CHAR (10),";
 		$createStatement .= " DB_TITTEL CHAR (255),";
 		$createStatement .= " DB_PAPIR CHAR (1),";
-		$createStatement .= " DB_LOKALISERING CHAR (255),";
+		$createStatement .= " DB_LOKPAPIR CHAR (255),";
 		$createStatement .= " DB_STATUS CHAR (2),";
 		$createStatement .= " DB_UTARBAV CHAR (10),";
 		$createStatement .= " DB_TGKODE CHAR (2),";		
@@ -399,6 +398,15 @@ class Noark4DatabaseStruktur  {
 		return $createStatement;
 	}
 
+	function createEMNEORD() {
+		$createStatement = " CREATE TABLE EMNEORD ( ";
+		
+		$createStatement .= " EO_EMNEORD CHAR(70) PRIMARY KEY";		
+		$createStatement .= ") engine = innodb; ";
+		return $createStatement;
+	}
+
+
 	function createENHTYPE() {
 		$createStatement = " CREATE TABLE ENHTYPE ( ";
 		
@@ -447,7 +455,7 @@ class Noark4DatabaseStruktur  {
 	}
 
 	function createJENARKDEL() {
-		$createStatement = " CREATE TABLE JENARKDEL ( ";
+		$createStatement = " CREATE TABLE JENARKD ( ";
 		
 		$createStatement .= " JA_JENHET CHAR(10),";
 		$createStatement .= " JA_ARKDEL CHAR(70),";
@@ -560,10 +568,10 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " KL_ORDNPRI CHAR (10),";
 		$createStatement .= " KL_ORDNVER CHAR (70),";
 		$createStatement .= " KL_U1 CHAR (1),";
-		$createStatement .= " PRIMARY KEY (KL_SAID, KL_ORDNPRI, KL_ORDNVER),";
-		$createStatement .= " FOREIGN KEY (KL_SAID) REFERENCES NOARKSAK (SA_ID),";
-		$createStatement .= " FOREIGN KEY (KL_ORDNPRI) REFERENCES ORDNPRI(OP_ORDNPRI),";
-		$createStatement .= " FOREIGN KEY (KL_ORDNVER) REFERENCES ORDNVERD(OV_ORDNVER) ";
+		$createStatement .= " PRIMARY KEY (KL_SAID, KL_ORDNPRI, KL_ORDNVER)";
+//		$createStatement .= " FOREIGN KEY (KL_SAID) REFERENCES NOARKSAK (SA_ID),";
+//		$createStatement .= " FOREIGN KEY (KL_ORDNPRI) REFERENCES ORDNPRI(OP_ORDNPRI),";
+//		$createStatement .= " FOREIGN KEY (KL_ORDNVER) REFERENCES ORDNVERD(OV_ORDNVER) ";
 		
 		$createStatement .= ") engine = innodb; ";
 		return $createStatement;
@@ -613,7 +621,6 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " ME_ITYPE CHAR (10),";
 		$createStatement .= " ME_TGKODE CHAR (2),";
 		$createStatement .= " ME_TGGRUPPE CHAR (10),";
-		$createStatement .= " ME_REGKL TIME,";
 		$createStatement .= " ME_REGAV CHAR (10),";
 		$createStatement .= " ME_PVGAV CHAR (10),";
 		$createStatement .= " ME_REGDATO CHAR (8),";
@@ -649,15 +656,13 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " SA_TGKODE CHAR (2),";
 		$createStatement .= " SA_UOFF VARCHAR (70),";
 		$createStatement .= " SA_TGGRUPPE CHAR (10),";
-		$createStatement .= " SA_ANTJP CHAR (2),";
+		$createStatement .= " SA_ANTJP CHAR (3),";
 		$createStatement .= " SA_BEVTID CHAR (2),";
-		$createStatement .= " SA_KASSKODE CHAR (2),";
-		$createStatement .= " SA_KASSDATO CHAR (8),"; 
-		$createStatement .= " SA_PROSJEKT VARCHAR (70),";
+//		$createStatement .= " SA_KASSKODE CHAR (2),";
+//		$createStatement .= " SA_KASSDATO CHAR (8),"; 
+//		$createStatement .= " SA_PROSJEKT VARCHAR (70),";
 		$createStatement .= " SA_PRES VARCHAR (70),";
 		$createStatement .= " SA_FRARKDEL VARCHAR (10),";
-		$createStatement .= " SA_UTLDATO CHAR (8),"; 
-		$createStatement .= " SA_UTLTIL CHAR (2),";
 		$createStatement .= " FOREIGN KEY (SA_TYPE) REFERENCES  SAKTYPE (ST_TYPE)";
 /*		$createStatement .= " FOREIGN KEY (SA_STATUS) REFERENCES SAKSTAT (SS_STATUS),";
 		$createStatement .= " FOREIGN KEY (SA_ARKDEL) REFERENCES ARKIVDEL (AD_ARKDEL),";
@@ -712,7 +717,7 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " OP_EVOK CHAR (1),";
 		$createStatement .= " OP_EVAUTO CHAR (1),";
 		$createStatement .= " OP_SEKFLAGG CHAR (1),";
-		$createStatement .= " OP_FRADATO CHAR (8),";
+//		$createStatement .= " OP_FRADATO CHAR (8),";
 		$createStatement .= " OP_TILDATO CHAR (8),";
 		$createStatement .= " OP_TGKODE CHAR(2),";
 		$createStatement .= " FOREIGN KEY (OP_TYPE) REFERENCES OPRITYP (OT_KODE)";		
@@ -870,8 +875,8 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " SP_KONTAKT CHAR (70),";
 		$createStatement .= " SP_ROLLE CHAR (70),";
 		$createStatement .= " SP_FAKS CHAR (20),";
-		$createStatement .= " SP_TLF CHAR (20)";
-//		$createStatement .= " PRIMARY KEY (SP_SAID, SP_NAVN),";
+		$createStatement .= " SP_TLF CHAR (20),";
+		$createStatement .= " PRIMARY KEY (SP_SAID, SP_NAVN)";
 //		$createStatement .= " FOREIGN KEY (SP_SAID) REFERENCES NOARKSAK (SA_ID),";
 		//$createStatement .= " FOREIGN KEY (SP_KORTNAVN) REFERENCES ADRESSEK (AK_KORTNAVN)";
 		
@@ -950,9 +955,9 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " TJ_JENHET CHAR (10),";
 		$createStatement .= " TJ_ADMID CHAR (10),";
 		$createStatement .= " TJ_AUTAV CHAR (10),";
-		$createStatement .= " TJ_AUTOPPAV CHAR (10),";
+//		$createStatement .= " TJ_AUTOPPAV CHAR (10),";
 		$createStatement .= " TJ_FRADATO CHAR (8),";
-		$createStatement .= " TJ_TILDATO CHAR (8),";
+//		$createStatement .= " TJ_TILDATO CHAR (8),";
 		$createStatement .= " PRIMARY KEY (TJ_PEID, TJ_JENHET, TJ_ADMID)";		
 //		$createStatement .= " FOREIGN KEY (TJ_PEID) REFERENCES PERSON (PE_ID),";
 		// can contain null values
@@ -1137,10 +1142,9 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " UM_FRADATO CHAR (8),";
 		$createStatement .= " UM_TILDATO CHAR (8),";
 		$createStatement .= " UM_SORT CHAR (3),";
-		$createStatement .= " UM_REPRES CHAR (10),";
-		$createStatement .= " UM_SEKR CHAR (1),";
-		$createStatement .= " UM_MEDLEM CHAR (1),";
-		$createStatement .= " UM_MERKNAD VARCHAR(255),";
+//		$createStatement .= " UM_REPRES CHAR (10),";
+//		$createStatement .= " UM_SEKR CHAR (1),";
+//		$createStatement .= " UM_MERKNAD VARCHAR(255),";
 		$createStatement .= " PRIMARY KEY(UM_UTVID, UM_PNID, UM_TILDATO),"; 
 		$createStatement .= " FOREIGN KEY (UM_PNID) REFERENCES PERSON (PE_ID),";
 		// THis one needs to be active
@@ -1175,12 +1179,7 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " MO_NR CHAR (5),";
 		$createStatement .= " MO_UTVID CHAR (10),";
 		$createStatement .= " MO_LUKKET CHAR (1),";
-		$createStatement .= " MO_DATO CHAR (8),";
-		$createStatement .= " MO_START TIME,";
-		$createStatement .= " MO_STED CHAR (70),";
-		$createStatement .= " MO_FRIST CHAR (70),";
-		$createStatement .= " MO_SAKSKART CHAR (1),";
-		$createStatement .= " MO_PROTOKOLL CHAR (1)";
+		$createStatement .= " MO_DATO CHAR (8)";
 		
 		$createStatement .= ") engine = innodb; ";
 		return $createStatement;

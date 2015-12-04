@@ -53,8 +53,8 @@ class StatMDokDAO extends Noark4Base {
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM STATMDOK";
     	$mapping = array ('idColumn' => 'ms_status', 
-  				'rootTag' => 'STATMDOK.TAB',	
-			    		'rowTag' => 'STATMDOK',
+  				'rootTag' => 'STATUSMDOK.TAB',	
+			    		'rowTag' => 'STATUSMDOK',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'MS.STATUS' => 'ms_status',

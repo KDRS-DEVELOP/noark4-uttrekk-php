@@ -6,7 +6,7 @@ require_once 'models/Noark4Base.php';
 class JenArkdDAO extends Noark4Base {
 	
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
-                parent::__construct (Constants::getXMLFilename('JENARKDEL'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
+                parent::__construct (Constants::getXMLFilename('JENARKD'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 		$this->selectQuery = "select JOURENHET, FYSARK from " . $SRC_TABLE_NAME . "";
 	} 
 	
@@ -25,7 +25,7 @@ class JenArkdDAO extends Noark4Base {
 	
 	function writeToDestination($data) {		
 		
-		$sqlInsertStatement = "INSERT INTO JENARKDEL (JA_JENHET, JA_ARKDEL) VALUES (";
+		$sqlInsertStatement = "INSERT INTO JENARKD (JA_JENHET, JA_ARKDEL) VALUES (";
     	    	
 		$sqlInsertStatement .= "'" . $data->JA_JENHET . "', ";
 		$sqlInsertStatement .= "'" . $data->JA_ARKDEL . "'";			
@@ -37,10 +37,11 @@ class JenArkdDAO extends Noark4Base {
     	}
 
 	function createXML($extractor) {  
-		$sqlQuery = "SELECT * FROM JENARKDEL";
+		$sqlQuery = "SELECT * FROM JENARKD";
 		$mapping = array ('idColumn' => 'ja_jenhet', 
 					'rootTag' => 'JENARKDEL.TAB',	
 						'rowTag' => 'JENARKDEL',
+						'fileName' => 'JENARKD',
 							'encoder' => 'utf8_decode',
 								'elements' => array(
 									'JA.JENHET' => 'ja_jenhet',

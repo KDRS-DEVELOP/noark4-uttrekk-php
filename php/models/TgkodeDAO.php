@@ -12,11 +12,20 @@ class TgkodeDAO extends Noark4Base {
 	} 
 	
 	function processTable () {
+
+		$tgKode = new Tgkode();
+		$tgKode->TK_TGKODE = 'F';
+		$tgKode->TK_BETEGN = 'Ofl. §5a, Beskyttelsesinstruksen';
+		$tgKode->TK_EPOSTNIV = '4';		
+		$this->writeToDestination($tgKode);
+		$this->logger->log($this->XMLfilename, "Added missing TGKODE TK_TGKODE(" . $tgKode->TK_TGKODE . ")", Constants::LOG_INFO);
+		$this->infoIssued = true;
+
 		$this->srcBase->createAndExecuteQuery ($this->selectQuery);
 		
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$tgKode = new Tgkode();
-				if (isset($result['UNNTOFF']) == true) {
+				if (strcmp($result['UNNTOFF'], ' ') != 0) {
 					$tgKode->TK_TGKODE = $result['UNNTOFF'];
 					$tgKode->TK_BETEGN = $result['BESKRIVELSE'];
 					$tgKode->TK_SERIE = $result['SERIE'];
@@ -59,7 +68,6 @@ class TgkodeDAO extends Noark4Base {
     }
 	
     
-    
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM TGKODE";
     	$mapping = array ('idColumn' => 'tk_tgkode', 
@@ -70,9 +78,9 @@ class TgkodeDAO extends Noark4Base {
 							'TK.TGKODE' => 'tk_tgkode',
 							'TK.BETEGN' => 'tk_betegn',
 							'TK.SERIE' => 'tk_serie',
-							'TK.EPOSTNIV' => 'tk_epostniv',
 							'TK.FRADATO' => 'tk_fradato',
-							'TK.TILDATO' => 'tk_tildato'
+							'TK.TILDATO' => 'tk_tildato',
+							'TK.EPOSTNIV' => 'tk_epostniv'
   							) 
 						) ;
 		

@@ -23,7 +23,14 @@ class UtvMoteDAO extends Noark4Base {
 				$utvMote = new UtvMote();
 				$utvMote->MO_ID = $result['ID'];
 				$utvMote->MO_NR = $result['MOTENR'];
-				$utvMote->MO_UTVID = $result['UTVID'];
+
+				if (isset($result['UTVID']) == false) {
+					$utvMote->MO_UTVID = '0';
+					$this->logger->log($this->XMLfilename, "MO.ID (" . $utvMote->MO_ID .  ") has null value for MO_UTVID. Setting MO_UTVID to 0" . $utvMote->MO_ID, Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				} else {
+					$utvMote->MO_UTVID = $result['UTVID'];
+				}
 
 				if (strcmp($result['LUKKET'], 'Å') == 0) {
 					$utvMote->MO_LUKKET = '1';
@@ -43,21 +50,6 @@ class UtvMoteDAO extends Noark4Base {
 				}
 				
 				$utvMote->MO_DATO = Utility::fixDateFormat($result['MOTEDATO']);
-				$utvMote->MO_START = Utility::fixTimeFormat($result['MOTETID']);
-				$utvMote->MO_FRIST= $result['FRIST'];
-				if (is_null($result['SAKSKART']) == true) {
-					$utvMote->MO_SAKSART = '0';
-				}
-				else {
-					$utvMote->MO_SAKSART = $result['SAKSKART'];
-				}
-
-				if (is_null($result['PROTOKOLL']) == true) {
-					$utvMote->MO_PROTOKOLL = '0';
-				}
-				else {
-					$utvMote->MO_PROTOKOLL = $result['PROTOKOLL'];
-				}
 					
 				
 				$this->utvMoteDokDAO->processUtvMoteDok($utvMote->MO_UTVID, $utvMote->MO_ID, $result['JOURAARNR']);
@@ -69,22 +61,19 @@ class UtvMoteDAO extends Noark4Base {
 	
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO  UTVMOTE (MO_ID, MO_NR, MO_UTVID, MO_LUKKET, MO_DATO, MO_START, MO_FRIST, MO_SAKSKART, MO_PROTOKOLL) VALUES (";
+		$sqlInsertStatement = "INSERT INTO  UTVMOTE (MO_ID, MO_NR, MO_UTVID, MO_LUKKET, MO_DATO) VALUES (";
 		$sqlInsertStatement .= "'" . $data->MO_ID . "', ";						
 		$sqlInsertStatement .= "'" . $data->MO_NR . "', ";
 		$sqlInsertStatement .= "'" . $data->MO_UTVID . "', ";
 		$sqlInsertStatement .= "'" . $data->MO_LUKKET . "', ";
-		$sqlInsertStatement .= "'" . $data->MO_DATO . "', ";
-		$sqlInsertStatement .= "'" . $data->MO_START . "', ";
-		$sqlInsertStatement .= "'" . $data->MO_FRIST . "', ";
-		$sqlInsertStatement .= "'" . $data->MO_SAKSKART . "', ";
-		$sqlInsertStatement .= "'" . $data->MO_PROTOKOLL . "'";
+		$sqlInsertStatement .= "'" . $data->MO_DATO . "'";
 	
 		$sqlInsertStatement.= ");";
 		
 		$this->uttrekksBase->executeStatement($sqlInsertStatement);
     }
  
+
   function createXML($extractor) {    
     	$sqlQuery = "SELECT * FROM UTVMOTE";
     	$mapping = array ('idColumn' => 'MO.ID', 
@@ -96,11 +85,7 @@ class UtvMoteDAO extends Noark4Base {
 							'MO.NR' => 'mo_nr',
 							'MO.UTVID' => 'mo_utvid',
 							'MO.LUKKET' => 'mo_lukket',
-							'MO.DATO' => 'mo_dato',
-							'MO.START' => 'mo_start',
-							'MO.FRIST' => 'mo_frist',
-							'MO.SAKSKART' => 'mo_sakskart',
-							'MO.PROTOKOLL' => 'mo_protokoll'
+							'MO.DATO' => 'mo_dato'
   							) 
 						) ;
 		
