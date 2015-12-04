@@ -26,10 +26,6 @@ class NoarkIHCreator {
 		$this->uttrekksBase = $uttrekksBase;	
 		$this->outputDir = $outputDir;
 		$this->exportInfo = $exportInfo;
-
-
-
-
 	} 
 
 	public function  generateNoarkIH () {		
@@ -64,14 +60,16 @@ class NoarkIHCreator {
 	
 			$resultHandleForTables =  $this->uttrekksBase->executeQueryFetchResultHandle ($this->selectTablesQuery);
 	
-		
+			
 			while ($tableDetails = mysql_fetch_assoc($resultHandleForTables)) {
 				
+			
 				fwrite($fh, "\t<TABELLINFO>\n");
 
-				$tablenamePre = $tableDetails["Tables_in_Noark4"];
-				$tablename = Constants::mapTablenamesForNOARKIH($tablenamePre); 
-				echo $tablename . " " . $tablenamePre . "\n";
+				$tablenamePre = array_pop($tableDetails);
+				//echo PHP_EOL . " **--** " . $tablename . " " . $tablenamePre . "\n";
+				$tablename = Constants::mapTablenamesForNOARKIH(strtoupper($tablenamePre)); 
+				//echo PHP_EOL . " **--** " . $tablename . " " . $tablenamePre . "\n";
 				// Argh!! Why must the standard be so akward and require me to do this!!!
 				if (is_null($tablename) == true) {
 					$tablename = $tablenamePre;
@@ -79,7 +77,12 @@ class NoarkIHCreator {
 
 				$columnQuery = $this->selectColsQuery . " " . $tablenamePre;
 	
+	
 				$tablenameLine = "\t\t<TI.TABELL>" . $tablename . "</TI.TABELL>\n";
+				//echo $tablenameLine . PHP_EOL;
+				
+				
+
 				fwrite($fh, $tablenameLine );
 				fwrite($fh, "\t\t<ATTRIBUTTER>\n");
 	
@@ -99,7 +102,7 @@ class NoarkIHCreator {
 				mysql_free_result($resultHandleForColumns);
 	
 
-				$noarkXmlFileName = Constants::getXMLFilename($tablenamePre);
+				$noarkXmlFileName = Constants::getXMLFilename(strtoupper($tablenamePre));
 				fwrite($fh, "\t\t<FIL>\n");
 				$noark4fileNameLine = "\t\t\t<TI.FILNAVN>". $noarkXmlFileName. "</TI.FILNAVN>\n";
 				fwrite($fh, $noark4fileNameLine);

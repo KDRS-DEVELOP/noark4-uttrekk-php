@@ -74,8 +74,19 @@ class AvskrmDAO extends Noark4Base {
 		$sqlInsertStatement .= "'" . $data->AV_BESVART . "'";			
 	
 		$sqlInsertStatement.= ");";
+
+		$this->uttrekksBase->printErrorIfDuplicateFail = false;	
 		
-		$this->uttrekksBase->executeStatement($sqlInsertStatement);
+		if ($this->uttrekksBase->executeStatement($sqlInsertStatement) == false) {
+			// 1062 == duplicate key. Scary to hardcode, but can't find mysql constants somewhere
+			if (mysql_errno() == Constants::MY_SQL_DUPLICATE) {
+				// This table is know to contain duplicates. We just log and continue
+				$this->logger->log($this->XMLfilename, "Duplicate value detected. Value is AV_KODE (" . $data->AV_KODE . "), AV_BETEGN (" . $data->AV_BETEGN . ")", Constants::LOG_WARNING);
+			}
+		}
+  		$this->uttrekksBase->printErrorIfDuplicateFail = true;
+		
+		
     }
 	
   	function createXML($extractor) {    

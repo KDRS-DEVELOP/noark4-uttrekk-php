@@ -1,0 +1,14 @@
+noark4-uttrekk-php_parameters.txt
+
+Komando uttrekk Noark 4-system
+o Uttrekk fra noark 4-baser
+
+For å kjøre koden naviger til mappen der main.php ligger å kjør med følgende parameter:
+
+c:\(plassering på maskin)>php main.php -d<SID> -k<kommunenavn>
+
+-d(SID)
+-k(kommunenavn)
+
+Eks:
+c:\noark4-uttrekk>php main.php -dN4SID -kTestKommune

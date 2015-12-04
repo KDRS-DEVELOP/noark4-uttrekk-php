@@ -20,7 +20,7 @@ class AdressekpDAO extends Noark4Base {
 				$adressekp = new Adressekp();
 				$adressekp->AK_ADRID = $result['ADRID'];
 				$adressekp->AK_TYPE = $result['ADRTYPE'];
-				$adressekp->AK_KORTNAVN = $result['NAVNKODE'];
+				$adressekp->AK_KORTNAVN = mysql_real_escape_string($result['NAVNKODE']);
 				$adressekp->AK_NAVN = $result['NAVN'];
 				$adressekp->AK_POSTADR = $result['ADRESSE'] . $result['ADRESSE2'];
 				$adressekp->AK_POSTNR = $result['POSTNR'];

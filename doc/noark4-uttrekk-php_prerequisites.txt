@@ -1,0 +1,6 @@
+noark4-uttrekk-php_parameters.txt
+
+ToDO: Write prerequisites information in this document.
+o Soure database
+o Target and/or Temporary database(s)
+o Required userts etc.

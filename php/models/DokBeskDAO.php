@@ -62,7 +62,7 @@ class DokBeskDAO extends Noark4Base {
 		
 		$this->uttrekksBase->printErrorIfFKFail = false;
 
-//	echo $sqlInsertStatement . "\n";
+
 	$this->logger->log($this->XMLfilename, "SQL som skapr problem " . $sqlInsertStatement, Constants::LOG_WARNING);
 
 
@@ -70,20 +70,23 @@ class DokBeskDAO extends Noark4Base {
 
 			if (mysql_errno() == Constants::MY_SQL_MISSING_FK_VALUE) {
 
-				$errorString = mysql_error();
+				//echo $sqlInsertStatement . "\n";
+				//$errorString = mysql_error();
 				// Missing refernece to NOARKSAK. Probably UTGÅR - ingnored and logged as ERROR
-				if (strpos($errorString, "PERSON") !== FALSE) {
+				
+				//echo '\n' . $errorString . '\n';
+				//if (strpos($errorString, "PERSON") !== FALSE) {
 					$this->logger->log($this->XMLfilename, "Missing PERSON with ID DB.UTARBAV(" . $data->DB_UTARBAV . ") for DOKID (" . $data->DB_UTARBAV . "). PERSON identified in DB.UTARBAV set to NOUSER Value (" . Constants::INGENBRUKER_ID . ")", Constants::LOG_WARNING);
 
 					$this->warningIssued = true;
 
 					$data->DB_UTARBAV= Constants::INGENBRUKER_ID;
 					$this->writeToDestination($data);
-				}			
-				else {
-					echo "DOKVERS proces error " . $errorString;
-					die;
-				}
+				//}			
+				//else {
+				//	echo "DOKVERS proces error " . $errorString;
+				//	die;
+				//}
 			}
 		}
 		$this->uttrekksBase->printErrorIfFKFail = true;

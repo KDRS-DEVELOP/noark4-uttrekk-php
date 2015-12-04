@@ -63,8 +63,8 @@ class DokVersDAO extends Noark4Base {
 			if (mysql_errno() == Constants::MY_SQL_MISSING_FK_VALUE) {
 
 				$errorString = mysql_error();
-				// Missing refernece to NOARKSAK. Probably UTGÅR - ingnored and logged as ERROR
-				if (strpos($errorString, "PERSON") !== FALSE) {
+				
+				if (strpos($errorString, "person") !== FALSE) {
 					$this->logger->log($this->XMLfilename, "Missing PERSON with ID VE.REGAV(" . $data->VE_REGAV . ") for DOKID (" . $data->VE_DOKID . "). PERSON identified in VE_REGAV set to NOUSER Value (" . Constants::INGENBRUKER_ID . ")", Constants::LOG_WARNING);
 
 					$this->warningIssued = true;
@@ -73,7 +73,7 @@ class DokVersDAO extends Noark4Base {
 					$this->writeToDestination($data);
 				}			
 				else {
-				     //die;
+				  die;
 					echo "DOKVERS proces error " . $errorString;
 
 				}

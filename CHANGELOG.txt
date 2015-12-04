@@ -2,6 +2,32 @@ CHANGELOG.txt
 
 Noark 4 Uttrekk PHP
 
+### ver 0.1.3a 2015-09-04 Thomas Sødring, adjustments ###
+
+Added
+..\doc\noark4-uttrekk-php_parameters.txt
+..\doc\noark4-uttrekk-php_prerequisites.txt [ToDo: write information in this document]
+..\doc\noark4-systems\ [moved folders and files into subdirectories]
+
+Some minor adjustments in php-files:
+..\database\noarkDatabaseStruktur.php
+..\extraction\NoarkIHCreator.php
+..\ini\destination_db.ini\destination_db.ini
+..\ini\src_db.ini
+
+..\models\AdressekpDAO.php
+..\models\AvskrmDAO.php
+..\models\BokBeskDAO.php
+..\models\DokVersDAO.php
+..\models\ForsmateDAO.php
+..\models\Merknad.php
+..\models\MerknadDAO.php
+..\models\SakTypeDAO.php
+..\models\TghjemDAO.php
+..\models\TgkodeDAO.php
+
+..\utility\Logger.php
+
 ### ver 0.1.2a 2015-01-29 Thomas Sødring, adjustments ###
 
 Some minor adjustments in php-files.

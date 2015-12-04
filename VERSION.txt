@@ -1,2 +1,2 @@
 VERSION.txt
-ver 0.1.2a 2015-01-29 TSO, adjustments
+ver 0.1.3a 2015-09-04 TSO, adjustments

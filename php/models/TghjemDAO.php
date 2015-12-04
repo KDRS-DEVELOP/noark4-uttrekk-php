@@ -45,7 +45,7 @@ class TghjemDAO extends Noark4Base {
 		$tgHjem->TH_ANVEND = 'Unntatt offentlig ofl §6'; // BESKRIVELSE		
 		$this->writeToDestination($tgHjem);
 		$this->logger->log($this->XMLfilename, "Added missing TGHJEMMEL TGKODE(" . $tgHjem->TH_TGKODE . ") TH_UOFF (" . $tgHjem->TH_UOFF . ")", Constants::LOG_INFO);
-
+/*
 		$tgHjem = new Tghjem();
 		$tgHjem->TH_TGKODE = 'EI'; // UNNTOFF
 		$tgHjem->TH_UOFF = 'Off.l. §13-15'; //HJEMMEL
@@ -53,7 +53,7 @@ class TghjemDAO extends Noark4Base {
 		$tgHjem->TH_ANVEND = 'Må sjekkes'; // BESKRIVELSE		
 		$this->writeToDestination($tgHjem);
 		$this->logger->log($this->XMLfilename, "Added missing TGHJEMMEL TGKODE(" . $tgHjem->TH_TGKODE . ") TH_UOFF (" . $tgHjem->TH_UOFF . ")", Constants::LOG_INFO);
-
+*/
 		$tgHjem = new Tghjem();
 		$tgHjem->TH_TGKODE = '11'; // UNNTOFF
 		$tgHjem->TH_UOFF = 'Ofl §11'; //HJEMMEL
@@ -61,7 +61,7 @@ class TghjemDAO extends Noark4Base {
 		$tgHjem->TH_ANVEND = 'Unntatt offentlig ofl §11'; // BESKRIVELSE
 		$this->writeToDestination($tgHjem);
 		$this->logger->log($this->XMLfilename, "Added missing TGHJEMMEL TGKODE(" . $tgHjem->TH_TGKODE . ") TH_UOFF (" . $tgHjem->TH_UOFF . ")", Constants::LOG_INFO);
-
+/*
 		$tgHjem = new Tghjem();
 		$tgHjem->TH_TGKODE = 'B'; // UNNTOFF
 		$tgHjem->TH_UOFF = 'Ofl §6.1 sikk.l §11d.'; //HJEMMEL
@@ -69,7 +69,7 @@ class TghjemDAO extends Noark4Base {
 		$tgHjem->TH_ANVEND = 'Begrenset etter sikkerhetsinstruksen'; // BESKRIVELSE
 		$this->writeToDestination($tgHjem);
 		$this->logger->log($this->XMLfilename, "Added missing TGHJEMMEL TGKODE(" . $tgHjem->TH_TGKODE . ") TH_UOFF (" . $tgHjem->TH_UOFF . ")", Constants::LOG_INFO);
-
+*/
 		$tgHjem = new Tghjem();
 		$tgHjem->TH_TGKODE = 'F'; // UNNTOFF
 		$tgHjem->TH_UOFF = 'Ofl §6.1 sikk.l §11d.'; //HJEMMEL
@@ -77,7 +77,7 @@ class TghjemDAO extends Noark4Base {
 		$tgHjem->TH_ANVEND = 'Fortrolig etter sikkerhetsinstruksen'; // BESKRIVELSE
 		$this->writeToDestination($tgHjem);
 		$this->logger->log($this->XMLfilename, "Added missing TGHJEMMEL TGKODE(" . $tgHjem->TH_TGKODE . ") TH_UOFF (" . $tgHjem->TH_UOFF . ")", Constants::LOG_INFO);
-
+/*
 		$tgHjem = new Tghjem();
 		$tgHjem->TH_TGKODE = 'U'; // UNNTOFF
 		$tgHjem->TH_UOFF = 'Utgar'; //HJEMMEL
@@ -85,7 +85,7 @@ class TghjemDAO extends Noark4Base {
 		$tgHjem->TH_ANVEND = 'Utgår'; // BESKRIVELSE
 		$this->writeToDestination($tgHjem);
 		$this->logger->log($this->XMLfilename, "Added missing TGHJEMMEL TGKODE(" . $tgHjem->TH_TGKODE . ") TH_UOFF (" . $tgHjem->TH_UOFF . ")", Constants::LOG_INFO);
-
+*/
 //		$tgHjem = new Tghjem();
 //		$tgHjem->TH_TGKODE = ''; // UNNTOFF
 //		$tgHjem->TH_UOFF = ''; //HJEMMEL

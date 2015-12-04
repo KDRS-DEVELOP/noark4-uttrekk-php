@@ -87,6 +87,7 @@ class SakTypeDAO extends Noark4Base {
 		
 		$sqlInsertStatement.= ");";
 	
+		$this->uttrekksBase->printErrorIfDuplicateFail = false;
 		if ($this->uttrekksBase->executeStatement($sqlInsertStatement) == false) {
 			// 1062 == duplicate key. Scary to hardcode, but can't find mysql constants somewhere
 			if (mysql_errno() == Constants::MY_SQL_DUPLICATE) {
@@ -94,6 +95,7 @@ class SakTypeDAO extends Noark4Base {
 				$this->logger->log($this->XMLfilename, "Known duplicate value detected. Value is " . $data->ST_TYPE, Constants::LOG_WARNING);
 			}
 		}
+		$this->uttrekksBase->printErrorIfDuplicateFail = true;
     }  
 
 	

@@ -37,6 +37,8 @@ class ForsMateDAO extends Noark4Base {
 	
 	function writeToDestination($data) {		
 		
+		
+		
 		$sqlInsertStatement = "INSERT INTO FORSMATE (FM_KODE, FM_BETEGN) VALUES (";
     	    	
 		$sqlInsertStatement .= "'" . $data->FM_KODE . "', ";
@@ -44,7 +46,18 @@ class ForsMateDAO extends Noark4Base {
 		
 		$sqlInsertStatement.= ");";
 	
-		$this->uttrekksBase->executeStatement($sqlInsertStatement);
+		
+		$this->uttrekksBase->printErrorIfDuplicateFail = false;
+		if ($this->uttrekksBase->executeStatement($sqlInsertStatement) == false) {
+			// 1062 == duplicate key. Scary to hardcode, but can't find mysql constants somewhere
+			if (mysql_errno() == Constants::MY_SQL_DUPLICATE) {
+				// This table i	s know to contain duplicates. We just log and continue
+				$this->logger->log($this->XMLfilename, "Known duplicate value detected. Value is " . $data->FM_KODE, Constants::LOG_WARNING);
+			}
+		}
+		$this->uttrekksBase->printErrorIfDuplicateFail = true;
+		
+		
 
     }  
 	

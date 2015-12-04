@@ -617,6 +617,7 @@ class Noark4DatabaseStruktur  {
 		$createStatement .= " ME_ID CHAR (10) PRIMARY KEY,";	
 		$createStatement .= " ME_SAID CHAR (10),";
 		$createStatement .= " ME_JPID CHAR (10),";
+		$createStatement .= " ME_DOKID CHAR (10),";
 		$createStatement .= " ME_RNR CHAR (6),";
 		$createStatement .= " ME_ITYPE CHAR (10),";
 		$createStatement .= " ME_TGKODE CHAR (2),";

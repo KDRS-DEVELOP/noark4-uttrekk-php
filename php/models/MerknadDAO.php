@@ -23,8 +23,11 @@ class MerknadDAO extends Noark4Base {
 				else if (!strcmp($result['REGISTER'], "J")) {
 					$merknad->ME_JPID = $result['NOKKEL'];	
 				}
+				else if (!strcmp($result['REGISTER'], "D")) {
+					$merknad->ME_DOKID = $result['NOKKEL'];	
+				}
 				else {
-				 die ("Unknown REGISTER value (" . $result['REGISTER'] . ") in " . $SRC_TABLE_NAME);
+				 //die ("Unknown REGISTER value (" . $result['REGISTER'] . ") in " . $SRC_TABLE_NAME);
 				}
 
 				$merknad->ME_RNR = $result['KOMNR'];
@@ -60,7 +63,7 @@ class MerknadDAO extends Noark4Base {
 		}
 		else if (!strcmp($register, "J")) {
 			$merknad->ME_JPID = $nokkel;	
-		}
+		}		
 		else {
 			die ("Unknown REGISTER value (" . $register. ") from SAK/JP" . $register);
 		}
@@ -79,11 +82,12 @@ class MerknadDAO extends Noark4Base {
 
 	function writeToDestination($data) {
 		
-		$sqlInsertStatement = "INSERT INTO MERKNAD (ME_ID, ME_SAID, ME_JPID, ME_RNR, ME_ITYPE, ME_TGKODE, ME_TGGRUPPE, ME_TEKST, ME_REGAV, ME_PVGAV, ME_REGDATO) VALUES (";
+		$sqlInsertStatement = "INSERT INTO MERKNAD (ME_ID, ME_SAID, ME_JPID, ME_DOKID, ME_RNR, ME_ITYPE, ME_TGKODE, ME_TGGRUPPE, ME_TEKST, ME_REGAV, ME_PVGAV, ME_REGDATO) VALUES (";
 	
 		$sqlInsertStatement .= "'" . $data->ME_ID . "', ";						
 		$sqlInsertStatement .= "'" . $data->ME_SAID . "', ";
 		$sqlInsertStatement .= "'" . $data->ME_JPID . "', ";
+		$sqlInsertStatement .= "'" . $data->ME_DOKID . "', ";
 		$sqlInsertStatement .= "'" . $data->ME_RNR. "', ";						
 		$sqlInsertStatement .= "'" . $data->ME_ITYPE . "', ";
 		$sqlInsertStatement .= "'" . $data->ME_TGKODE . "', ";
