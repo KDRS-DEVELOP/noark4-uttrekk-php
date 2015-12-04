@@ -94,10 +94,9 @@
 	
 	$options = getopt("d::");
 
-	// Check list of known SID
 	if (isset($options["d"]) == false) {
 			echo "ORACLE SID (til kildebasen) ikke angitt \n";
-			return;
+//			return;
 	}
 
 	if (isset($options["k"]) == false) {
@@ -151,8 +150,9 @@
 	$uttrekkMySQLBase = null;
 	
 	try {
-		$srcBase = new SrcBase($src_db_host, $src_db_port, $src_db_name, $src_db_user, $src_db_pswd, $src_db_sid);
 		$uttrekkMySQLBase = new UtrekkMySQLBase($uttrekk_db_host, $uttrekk_db_user, $uttrekk_db_pswd, $uttrekk_db_database);
+
+	$srcBase = new SrcBase($src_db_host, $src_db_port, $src_db_name, $src_db_user, $src_db_pswd, $src_db_sid);
 	}
 	catch (Exception $e)
 	{
@@ -171,6 +171,7 @@
 	
 	$databaseParameters = new MySQLDBParameters($uttrekk_db_host, 3306, $uttrekk_db_database, $uttrekk_db_user, $uttrekk_db_pswd);
 	$extractor = new Extractor("mysql", $databaseParameters, $uttrekkDirectory);
+
 	$extractor->deleteDirectoryAndContents();
 	$extractor->createDirectory ();
 	
@@ -198,10 +199,12 @@
 	
 	$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->deleteDatabaseStatement($uttrekk_db_database));
 	$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createDatabaseStatement($uttrekk_db_database));
+
 	$uttrekkMySQLBase->setDefaultDatabase();
 	
 	createNoark4DBStructure ($uttrekkMySQLBase, $noark4DatabaseStruktur);
 	
+
 	
 	
 	
@@ -216,16 +219,16 @@
 	//Tables are processed in an order that ensures Relational dependancy is not broken  
 
 
-/*
-	$tablesToTruncate = array('DOKBESK', 'DOKLINK', 'DOKVERS', 'JOURNPST', 'UTVALG', 'UTVMEDL', 'UTVMOTE', 'UTVSAK', 'UTVBEH', 'UTVBEHDO');
+
+//	$tablesToTruncate = array(/*'DOKBESK', 'DOKLINK', 'DOKVERS', 'JOURNPST',*/ 'POLSAKG', 'UTVALG', 'UTVMEDL', 'UTVMOTEDOK', 'UTVMOTE', 'UTVSAK', 'UTVBEH', 'UTVBEHDO');
 
 
-	foreach ($tablesToTruncate as $table) {
-		$SQLStatement = "TRUNCATE " . $table . "; ";
-		$uttrekkMySQLBase->executeStatement($SQLStatement);
-		echo $SQLStatement . "\n";
-	}
-*/
+	//foreach ($tablesToTruncate as $table) {
+	//	$SQLStatement = "TRUNCATE " . $table . "; ";
+	//	$uttrekkMySQLBase->executeStatement($SQLStatement);
+	//	echo $SQLStatement . "\n";
+	//}
+
 
 	
 
@@ -310,7 +313,9 @@
 	$medadrgrDAO = handleMEDADADRGR($srcBase, $uttrekkMySQLBase, $table_names['MEDADRGR_TABLE'], $logger);
 	//$perklarDAO = handlePERKLAR($srcBase, $uttrekkMySQLBase, $table_names['PERKLAR_TABLE'], $logger);
 	$tilleggDAO =  handleTILLEGG($srcBase, $uttrekkMySQLBase, $table_names['TILLEGG_TABLE'], $logger);
+
 	$sakPartDAO = handleSAKPART($srcBase, $uttrekkMySQLBase, $table_names['SAKPART_TABLE'], $logger);
+
 	$statMDokDAO = handleSTATMDOK($srcBase, $uttrekkMySQLBase, $table_names['SAKPART_TABLE'], $logger);
 	$polsakgDAO = handlePOLSAKG($srcBase, $uttrekkMySQLBase, $table_names['POLSAKG_TABLE'], $logger);
 	$tlKodeDAO =  handleTLKODE($srcBase, $uttrekkMySQLBase, $table_names['TLKODE_TABLE'], $logger);
@@ -320,12 +325,10 @@
 	$dokLinkDAO = new DokVersDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKVERS_TABLE'], $kommuneName, $logger);
 	$dokBeskDAO = new DokBeskDAO($srcBase, $uttrekkMySQLBase, $table_names['DOKBESK_TABLE'], $logger);
 
-
-	
-
-	//$utDokTypDAO = handleUTDOKTYPE($srcBase, $uttrekkMySQLBase, $table_names['UTVDOKTYPE_TABLE'], $logger);
+	$utDokTypDAO = handleUTDOKTYPE($srcBase, $uttrekkMySQLBase, $table_names['UTVDOKTYPE_TABLE'], $logger);
 	$utvMoteDAO = handleUTVMOTE($srcBase, $uttrekkMySQLBase, $table_names['UTVMOTE_TABLE'], $logger);
 
+	$utvMoteDokDAO = new UtvMoteDokDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVMOTEDOK_TABLE'], $logger);
 	$utvBehDoDAO = new UtvBehDoDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVBEHDO_TABLE'], $logger);
 	$utvSakDAO = new UtvSakDAO($srcBase, $uttrekkMySQLBase, $table_names['UTVSAK_TABLE'], $logger, $utvBehDoDAO);
 
@@ -420,7 +423,7 @@
         $exportInfo->tilDato = "22002200";
         $exportInfo->prodDato = "22002200";
 
-        $ihCreator = new NoarkIHCreator($uttrekkMySQLBase, $noarkIHoutputDir, $exportInfo);
+        $ihCreator = new NoarkIHCreator($uttrekkMySQLBase, $uttrekkDirectory, $exportInfo);
         $ihCreator->generateNoarkIH();
  
 	echo "Ferdig med XML filer\n";
@@ -505,6 +508,7 @@
 		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createTGINFO());
 		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createUTVALG());
 		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createUTVMOTE());
+		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createUTVMOTEDOK());
 		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createUTVBEHSTAT());
 		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createUTVBEH());
 		$uttrekkMySQLBase->executeStatement($noark4DatabaseStruktur->createUTVBEHDO());
@@ -665,7 +669,7 @@
 	}
 	
 	function handleARKIVPERIODE($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
-		echo "\t handling ARKIVPERIODE ... (False data added to ensure progress) ";
+		echo "\t handling ARKIVPERIODE ... ";
 		$logger->log("ARKIVPER.XML", "Started processing ARKIVPER(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
 		$arkivperiodeDAO = new ArkivPeriodeDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);		
@@ -980,7 +984,7 @@
 
 
 	function handleJOURNSTA($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
-		echo "\t handling JOURNSTA ...";
+		echo "\t handling JOURNSTA ... ";
 		$logger->log("JOURNSTA.XML", "Started processing JOURNSTA(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
 		$journStaDAO = new JournStaDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);		
@@ -1015,7 +1019,7 @@
 	}
 
 	function handleKLASS($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
-		echo "\t handling KLASS ...";
+		echo "\t handling KLASS ... ";
 		$logger->log("KLASS.XML", "Started processing KLASS(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
 		$klassDAO = new KlassDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
@@ -1154,7 +1158,7 @@
 	}
 	
 	function handleORDNPRI($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
-		echo "\t handling ORDNPR ... WARNING!! FALSE DATA INSERTED TO HANDLE REF INTEG FROM OTHER TABLE ";
+		echo "\t handling ORDNPR ... ";
 		$logger->log("ORDNPR.XML", "Started processing ORDNPR(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
 		$ordnpriDAO = new OrdnPriDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
@@ -1190,7 +1194,7 @@
 	}
 	
 	function handlePERKLAR($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
-		echo "\t handling PERKLAR ...";
+		echo "\t handling PERKLAR ... ";
 		$logger->log("PERKLAR.XML", "Started processing PERKLAR(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
 		$perKlarDAO = new PerKlarDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
@@ -1579,6 +1583,25 @@
 		return $utvBehStatDAO;
 	}
 
+	function handleUTDOKTYPE($srcBase, $uttrekkMySQLBase, $tableName, $logger) {		
+		echo "\t handling UTDOKTYPE ... ";
+		$logger->log("UTDOKTYPE.XML", "Started processing UTDOKTYPE(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
+
+		$utvDokTypeDAO = new UtvDokTypeDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
+		$utvDokTypeDAO->processTable();
+		$issues = $utvDokTypeDAO->getIssues();
+
+		if ($issues == "")	
+			$logger->log("UTDOKTYPE.XML", "Finished processing UTDOKTYPE. No issues reported",  Constants::LOG_PROCESSINGINFO);
+		else
+			$logger->log("UTDOKTYPE.XML", "Finished processing UTDOKTYPE. " . $issues,  Constants::LOG_PROCESSINGINFO);
+
+		echo $issues . " ... processed UTDOKTYPE " . $utvDokTypeDAO->countRowsInTableAfter() . " rows handled\n";
+		return $utvDokTypeDAO;
+
+
+	}
+
 	function handleUTVMEDL($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
 		echo "\t handling UTVMEDL ... ";
 		$logger->log("UTVMEDL.XML", "Started processing UTVMEDL(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
@@ -1629,6 +1652,24 @@
 		return $utvMoteDAO;
 	}
 
+	function handleUTVMOTEDOK($srcBase, $uttrekkMySQLBase, $tableName, $logger) {		
+		echo "\t handling UTVMOTEDOK ... ";
+		$logger->log("UTVMOTEDOK.XML", "Started processing UTVMOTEDOK(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
+
+		$utvMoteDokDAO = new UtvMoteDokDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);
+		$utvMoteDokDAO->processTable();
+		$issues = $utvMoteDokDAO->getIssues();
+
+		if ($issues == "")	
+			$logger->log("UTVMOTEDOK.XML", "Finished processing UTVMOTEDOK. No issues reported",  Constants::LOG_PROCESSINGINFO);
+		else
+			$logger->log("UTVMOTEDOK.XML", "Finished processing UTVMOTEDOK. " . $issues,  Constants::LOG_PROCESSINGINFO);
+
+		echo $issues . " ... processed UTVMOTEDOK " .  $utvMoteDokDAO->countRowsInTableAfter() . " rows handled\n";
+		return $utvMoteDokDAO;
+	}
+
+
 	function handleUTVSAK($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
 		echo "\t handling UTVSAK ... ";
 		$logger->log("UTVSAK.XML", "Started processing UTVSAK(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
@@ -1663,7 +1704,7 @@
 	}
 		
 	function handleVARFORM($srcBase, $uttrekkMySQLBase, $tableName, $logger) {
-		echo "\t handling VARFROM ...";
+		echo "\t handling VARFROM ... ";
 		$logger->log("VARFROM.XML", "Started processing VARFROM(" . $tableName . ")",  Constants::LOG_PROCESSINGINFO);
 
 		$varFromDAO = new VarFormDAO($srcBase, $uttrekkMySQLBase, $tableName, $logger);		

@@ -149,7 +149,7 @@ class JournPstDAO extends Noark4Base {
   						'encoder' => 'utf8_decode',
   						'elements' => array(
 							'JP.ID' => 'jp_id',
-							'JP.SAAR' => 'jp_jaar',
+							'JP.JAAR' => 'jp_jaar',
 							'JP.SEKNR' => 'jp_seknr',
 							'JP.SAID' => 'jp_said',
 							'JP.POSTNR' => 'jp_jpostnr',

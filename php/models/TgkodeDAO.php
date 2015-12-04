@@ -16,14 +16,21 @@ class TgkodeDAO extends Noark4Base {
 		
 		while (($result = $this->srcBase->getQueryResult ($this->selectQuery))) {
 				$tgKode = new Tgkode();
-				$tgKode->TK_TGKODE = $result['UNNTOFF'];
-				$tgKode->TK_BETEGN = $result['BESKRIVELSE'];
-				$tgKode->TK_SERIE = $result['SERIE'];
-				$tgKode->TK_EPOSTNIV = $result['EPOSTNIV'];
-				$tgKode->TK_FRADATO = Utility::fixDateFormat($result['FRADATO']);
-				$tgKode->TK_TILDATO = Utility::fixDateFormat($result['TILDATO']);
-				
-				$this->writeToDestination($tgKode);
+				if (isset($result['UNNTOFF']) == true) {
+					$tgKode->TK_TGKODE = $result['UNNTOFF'];
+					$tgKode->TK_BETEGN = $result['BESKRIVELSE'];
+					$tgKode->TK_SERIE = $result['SERIE'];
+					$tgKode->TK_EPOSTNIV = $result['EPOSTNIV'];
+					$tgKode->TK_FRADATO = Utility::fixDateFormat($result['FRADATO']);
+					$tgKode->TK_TILDATO = Utility::fixDateFormat($result['TILDATO']);
+					
+					$this->writeToDestination($tgKode);
+				}			
+				else {
+					$this->logger->log($this->XMLfilename, "TK.TGKODE value is null. null is used where TGKODE is not set. This value has been ignored.", Constants::LOG_WARNING);
+ 					$this->warningIssued = true;
+
+				}
 		}
 		$this->srcBase->endQuery($this->selectQuery);
 	}

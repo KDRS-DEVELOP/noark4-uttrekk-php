@@ -22,12 +22,13 @@ class ArkivDelDAO extends Noark4Base {
 				$arkivDel->AD_ARKIV = $result['ARKIV'];
 				$arkivDel->AD_PERIODE = $result['PERIODE'];
 				$arkivDel->AD_ASTATUS = $result['ASTATUS'];
-				// TODO: Confirm this
 				$arkivDel->AD_PRIMNOK = $result['PRIMNOK'];
-				// TODO : NOT IN FINAL VERSION!!!
-				if  ($result['PRIMNOK'] == null)
-					$arkivDel->AD_PRIMNOK = 'INGEN';
-				
+
+				if  ($result['PRIMNOK'] == null) {
+					$arkivDel->AD_PRIMNOK = 'FE';
+					$this->logger->log($this->XMLfilename, "PRIMNOK has null value. Setting it to FE  " . $arkivDel->AD_ARKDEL, Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
 				$arkivDel->AD_BSKODE = $result['BSKODE'];
 				$arkivDel->AD_FORTS = $result['FORTS'];
 				$arkivDel->AD_PAPIR = $result['PAPIR'];

@@ -1,0 +1,18 @@
+CHANGELOG.txt
+
+Noark 4 Uttrekk PHP
+
+### ver 0.1.1a 2015-01-28 Thomas Sødring, CHAR8 replace DATE ###
+
+Datatype CHAR (8) replaces datatype DATE in multiple occurences and folders of PHP-files.
+
+Added uttrekk-folders with dummy testfile for inclusion in git repository:
+uttrekksfiler\
+..\DATA
+..\DOKUMENT
+..\logg
+..\RAPPORT
+
+### ver 0.1.0a 2015-01-27 Thomas Sødring ###
+
+First commmit.

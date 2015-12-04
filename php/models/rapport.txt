@@ -1,0 +1,21 @@
+
+                      TESTRAPPORT FOR ARKIVUTTREKK
+                Kontroll av uttrekk fra Noark-4.1 system
+
+0.1.  OM RAPPORTEN
+
+  Dato..............: Wed Jun 11 16:12:56 2014
+  Versjon...........: importer 1.8
+  Importkatalog.....: /home/oracle/projects/esauttrekk/uttrekksfiler
+
+0.2.  EKSPORTINFO
+
+  Arkivskaper.......: test
+  Systemnavn........: test
+  Periode...........: 22002200   - 22002200
+  Produksjonsdato...: 22002200
+  Kommunenummer.....: kommune Name
+  Org.nummer........: <ikke oppgitt>
+  ID for arkivbase..: <ikke oppgitt>
+  Merknad...........: <ikke oppgitt>
+

@@ -27,7 +27,11 @@ class Extractor {
 		else {
 			throw new Exception("Unknown database type " . $databaseType);
 		}
-		$this->loggDir = $uttrekkDirectory . DIRECTORY_SEPARATOR . "logg";
+
+		$this->rapportDir = $uttrekkDirectory . DIRECTORY_SEPARATOR . "RAPPORT" . DIRECTORY_SEPARATOR;
+		$this->dataDir = $uttrekkDirectory . DIRECTORY_SEPARATOR . "DATA" . DIRECTORY_SEPARATOR;
+		$this->dokumentDir = $uttrekkDirectory . DIRECTORY_SEPARATOR . "DOKUMENT" . DIRECTORY_SEPARATOR;
+		$this->loggDir = $uttrekkDirectory . DIRECTORY_SEPARATOR . "logg" . DIRECTORY_SEPARATOR;
 	} 
 
     	public function __destruct () {
@@ -59,6 +63,15 @@ class Extractor {
 		}
 		if (is_dir($this->uttrekkDirectory . DIRECTORY_SEPARATOR . "logg") == false) {
 			mkdir($this->uttrekkDirectory . DIRECTORY_SEPARATOR . "logg");
+		}
+		if (is_dir($this->rapportDir) == false) {
+			mkdir($this->rapportDir);
+		}
+		if (is_dir($this->dataDir) == false) {
+			mkdir($this->dataDir);
+		}
+		if (is_dir($this->dokumentDir) == false) {
+			mkdir($this->dokumentDir);
 		}
 
 	}
@@ -96,7 +109,7 @@ class Extractor {
 		$endRowTag = "  </" . $mapping['rowTag'] . ">" . Constants::NEWLINE; 
 		
 		if (isset($xmlFilename) == true) {
-			$this->xmlFile = fopen($this->uttrekkDirectory . DIRECTORY_SEPARATOR . $xmlFilename, "w");
+			$this->xmlFile = fopen($this->dataDir . $xmlFilename, "w");
 		}
 
 		if (!$this->xmlFile) {
@@ -125,19 +138,26 @@ class Extractor {
 				// Do not print out empty tags
 				// Are dates with 0000-00-00 values empty??
 				// strtoupper because xml2query required column ids'
-				// be lowercase even though the column ids are in uppercase
+				// be lowercase even though t/home/oracle/projects/esauttrekk/uttrekksfiler/DATA/NOARKSAK.XMLRSTR(he column ids are in uppercase
 				// check to see if i need to use strtoupper
 
 				$colNameUpper = strtoupper($tempColName);
 
 
 				if (isset($result[$colNameUpper]) == true && $result[$colNameUpper] != null) {
-					$startTag = "    <" . $realColName . ">";
-					$value = $this->makeDataXMLSafe($result[$colNameUpper]);				
-					$endTag = "</" . $realColName . ">";
-					$row = $startTag . $value . $endTag . Constants::NEWLINE;
+					// I am just using DOM to make data XML safe. Think email address with < or >
+					$dom = new DOMDocument('1.0', 'utf-8');
+
+					$element = $dom->createElement($realColName );
+					$text = $dom->createTextNode($result[$colNameUpper]);
+
+					$element->appendChild($text);
+					$dom->appendChild($element);
+					
+					$row = "   " . $dom->saveXML($element) . PHP_EOL;
   
 					fwrite($this->xmlFile, $row);
+
 				}
 			} // foreach
 			
@@ -150,10 +170,7 @@ class Extractor {
 
 	} // function extract
 
-	function makeDataXMLSafe($input) {
-		// an own function incase I want to add something extra
-		return htmlentities($input);
-	}
+
 } // class      
 
 

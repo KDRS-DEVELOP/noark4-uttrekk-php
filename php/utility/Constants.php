@@ -71,6 +71,7 @@ class Constants {
 		"UTVMEDL" => "UTVMEDL.XML",
 		"UTVMEDLF" => "UTVMEDLF.XML",
 		"UTVMOTE" => "UTVMOTE.XML",
+		"UTVMOTEDOK" => "UTVMOTEDOK.XML",
 		"UTVSAK" => "UTVSAK.XML",
 		"UTVSAKTY" => "UTVSAKTY.XML",
 		"VARFORM" => "VARFORM.XML"
@@ -80,6 +81,35 @@ class Constants {
 	public static function getXMLFilename($table) {
 		return self::$xmlFileNames[$table];
 	}
+
+
+	public static function convertUtvDokType($input) {
+		
+		return str_replace(
+				array(
+					"PROTOKOLL",
+					"FREMLEGG",
+					"RAPPORT",
+					"VEDTAK",
+					"BREV",
+					"DOKUMENT",
+					"NOTAT",
+					"I"
+			),
+				array(
+					"SP",
+					"SF",
+					"RP",
+					"VE",
+					"BR",
+					"DO",
+					"NT",
+					"I"
+			),
+			$input
+		);
+	}
+
 	const ADMININDEL_TOPNIVA = '0';
 	const NEWLINE = "\n";
 	const XML_ENCODING = "UTF-8";
@@ -97,6 +127,7 @@ class Constants {
 	const LOG_WARNING = "WARNING";
 	const LOG_ERROR = "ERROR";
 	const UNKNOWN_DATE = "1000-01-01"; 
+	const DATE_AUTO_END = "2012-01-13"; // Things that aren't finished need a date that it's finished. Use this value to set a date 
 
  
 

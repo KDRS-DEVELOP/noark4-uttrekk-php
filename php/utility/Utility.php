@@ -18,16 +18,11 @@ class Utility {
 	{
 		$dd = substr($badDate, 0, 2);
 	    	$month = substr($badDate, 3, 2);
-	    	$yy = substr($badDate, 6, 2);
-	
-	    	if ($yy > 90)
-	    		$yyyy = "19" . $yy;
-    		else
-    			$yyyy = "20" . $yy;
-    		
-	    	return $yyyy . "-" . $month . "-" . $dd;
-
+	    	$yy = substr($badDate, 6, 4);
+	    		
+	    	return $yy . $month . $dd;
 	}
+
 
     	$dd = substr($badDate, 0, 2);
     	$month = substr($badDate, 3, 3);
@@ -40,7 +35,7 @@ class Utility {
     	else if (strcmp($month, 'MAR') == 0)
     		$mm = '03';
       	else if (strcmp($month, 'APR') == 0)
-   			$mm = '04';
+		$mm = '04';
        	else if (strcmp($month, 'MAY') == 0)
     		$mm = '05';
        	else if (strcmp($month, 'JUN') == 0)
@@ -66,7 +61,7 @@ class Utility {
     	else
     		$yyyy = "20" . $yy;
     		
-    	return $yyyy . "-" . $mm . "-" . $dd;
+    	return $yyyy . $mm . $dd;
     }		
 
 }

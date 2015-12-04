@@ -22,9 +22,28 @@ class ArkivPeriodeDAO extends Noark4Base {
 				
 				$arkivper->AP_ARKIV  = $result['ARKIV'];
 				$arkivper->AP_PERIODE = $result['PERIODE'];
-				$arkivper->AP_STATUS = $result['STATUS'];
+				
+
+				if (strcasecmp($result['STATUS'], "A") == 0) {
+					$arkivper->AP_STATUS = "B";
+					$this->logger->log($this->XMLfilename, "AP_STATUS is still A for AP_ARKIV(" . $arkivper->AP_ARKIV . "). Setting it to B", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+	
+				} else {
+					$arkivper->AP_STATUS = $result['STATUS'];
+				}
+
+
 				$arkivper->AP_FRADATO = Utility::fixDateFormat($result['FRADATO']);
-				$arkivper->AP_TILDATO = Utility::fixDateFormat($result['TILDATO']);
+
+				if (isset($result['TILDATO']) == false) {
+					$arkivper->AP_TILDATO = Constants::DATE_AUTO_END;
+					$this->logger->log($this->XMLfilename, "AP_TILDATO is null for AP_ARKIV(" . $arkivper->AP_ARKIV . "). Setting it to " . Constants::DATE_AUTO_END, Constants::LOG_WARNING);
+					$this->warningIssued = true;
+
+				} else {
+					$arkivper->AP_TILDATO = Utility::fixDateFormat($result['TILDATO']);
+				}
 				$arkivper->AP_MERKNAD = $result['MERKNAD'] ;
 				$this->writeToDestination($arkivper);
 		}

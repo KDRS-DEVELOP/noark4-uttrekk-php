@@ -111,13 +111,16 @@ class AvsmotDAO extends Noark4Base {
 								'elements' => array(
 									'AM.ID' => 'am_id',
 									'AM.JPID' => 'am_jpid',
+									'AM.IHTYPE' => 'am_jpid',
 									'AM.U1' => 'am_u1',
 									'AM.KORTNAVN' => 'am_kortnavn',
 									'AM.ADRESSE' => 'am_adresse',
 									'AM.POSTNR' => 'am_postnr',
 									'AM.POSTSTED' => 'am_poststed',
 									'AM.UTLAND' => 'am_utland',
-									'AM.EPOSTADR' => 'am_epostadr'
+									'AM.EPOSTADR' => 'am_epostadr',
+									'AM.ADMID'  => 'am_admid',
+									'AM.SBHID' => 'am_sbhid'
 									) 
 							) ;			
 		$extractor->extract($sqlQuery, $mapping, $this->XMLfilename, "file");

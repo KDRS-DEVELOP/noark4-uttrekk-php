@@ -18,28 +18,65 @@ class UtvSakDAO extends Noark4Base {
 
 		$jpQuery = "SELECT REFAARNR, DOKKAT, DOKSTATUS, TYPE FROM DGJMJO WHERE JOURAARNR = '" . $utvSak->US_SAID . "'";
 
-		$this->srcBase->createAndExecuteQuery ($jpQuery);		
+		$this->srcBase->createAndExecuteQuery ($jpQuery);	
+
+
+		// Sometimes a DOKID is used twice, once for ARKIV format and once for Produksjon. I want to process ARKIV format hence  "ORDER BY filnokkel DESC" in the SQL below
+		// and then ignore the second time I see this file.
+
+		$dokIdsProcessed = array();
+	
 		while (($jpResult = $this->srcBase->getQueryResult ($jpQuery))) {
 
 			$jpID = $jpResult['REFAARNR']; 
 			$dokKat = $jpResult['DOKKAT'];
-			$dokStatus = $jpResult['DOKSTATUS'];
 			$dokType = $jpResult['TYPE'];
-
-			$dokumentQuery = "SELECT DOKID FROM FILER WHERE REFAARNR = '" . $jpID . "'";
-
+			$dokStatus = "";
+			// This is proably PCFIL not DOKID!!!
+			$dokumentQuery = "SELECT PCFIL, DOKID, FILNOKKEL FROM FILER WHERE REFAARNR = '" . $jpID . "'";
 			// You are going to have to set values where no value is set!!
-
 			$this->srcBase->createAndExecuteQuery ($dokumentQuery);		
+
+
+
 			while (($dokResult = $this->srcBase->getQueryResult ($dokumentQuery))) {
-	
+
+
+
+				if ( isset ($dokIdsProcessed[$dokResult['DOKID']])) {
+					$this->logger->log($this->XMLfilename, "While processing UTVDOK within JP (" . $jpID . "), two or more files with same DOKID detected. First time DOKID is seen, it is processed. This occurence Applies to FILNOKKEL(" . $dokResult['FILNOKKEL'] . ")", Constants::LOG_INFO);
+					$this->warningIssued = true;
+					continue;
+				}
+
+				$dokIdsProcessed[$dokResult['DOKID']] = '1';
+
 				$utvBehDo = new UtvBehDo();
 				$utvBehDo->BD_BEHID = $utvBeh->UB_ID;
+				if (isset($jpResult['DOKSTATUS']) == false) {
+					$this->logger->log($this->XMLfilename, "DOKSTATUS for UTVDOK in JP (" . $jpID . ") is null!. Assigning DOKSTATUS a value of 'F'. Applies to DOKID (" . $dokResult['DOKID'] . ")", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+					$dokStatus  = "F";
+				}
+				else if (strcmp($jpResult['DOKSTATUS'], "B") == 0) {
+					$this->logger->log($this->XMLfilename, "DOKSTATUS for UTVDOK in JP (" . $jpID . ") is 'B'!. Assigning DOKSTATUS a value of 'F'. Applies to DOKID (" . $dokResult['DOKID'] . ")", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+					$dokStatus  = "F";	
+				} else {
+					$dokStatus = $jpResult['DOKSTATUS'];
+				}
+
+				if (isset($dokType) == false) {
+					$this->logger->log($this->XMLfilename, "DOKTYPE for UTVDOK in JP (" . $jpID . ") is null!. Assigning DOKTYPE value 'IA' ikke angitt . Applies to DOKID (" . $dokResult['DOKID'] . ")", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+					$dokType = "IA";	
+				}
+
 				$utvBehDo->BD_DOKID = $dokResult['DOKID'];
 				$utvBehDo->BD_NDOKTYPE = $dokType;
 				$utvBehDo->BD_STATUS= $dokStatus;
 				$utvBehDo->BD_JPID = $jpID;
-				$utvBehDo->BD_DOKTYPE = $dokKat;
+				$utvBehDo->BD_DOKTYPE = Constants::convertUtvDokType($dokKat);
 
 				$this->utvBehDoDAO->processUtvBehDo($utvBehDo);
 

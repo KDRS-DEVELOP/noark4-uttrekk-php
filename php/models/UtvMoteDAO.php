@@ -3,12 +3,17 @@
 require_once 'models/UtvMote.php';
 require_once 'utility/Utility.php';
 require_once 'models/Noark4Base.php';
+require_once 'models/UtvMoteDokDAO.php';
 
 class UtvMoteDAO extends Noark4Base {
 	
+	protected $utvMoteDokDAO;
+	 
 	public function __construct ($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger) {
                 parent::__construct (Constants::getXMLFilename('UTVMOTE'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
-		$this->selectQuery = "select ID, MOTENR, UTVID, LUKKET, MOTEDATO, MOTETID, FRIST, SAKSKART, PROTOKOLL FROM " . $SRC_TABLE_NAME . "";
+		$this->selectQuery = "select ID, MOTENR, UTVID, LUKKET, MOTEDATO, MOTETID, FRIST, SAKSKART, PROTOKOLL, JOURAARNR FROM " . $SRC_TABLE_NAME . "";
+		// Yes $SRC_TABLE_NAME is wrong but I need to finish this!!!
+		$this->utvMoteDokDAO = new UtvMoteDokDAO($srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 	} 
 	
 	function processTable () {
@@ -55,6 +60,8 @@ class UtvMoteDAO extends Noark4Base {
 				}
 					
 				
+				$this->utvMoteDokDAO->processUtvMoteDok($utvMote->MO_UTVID, $utvMote->MO_ID, $result['JOURAARNR']);
+
 				$this->writeToDestination($utvMote);
 		}
 		$this->srcBase->endQuery($this->selectQuery);
@@ -85,7 +92,7 @@ class UtvMoteDAO extends Noark4Base {
 			    		'rowTag' => 'UTVMOTE',
   						'encoder' => 'utf8_decode',
   						'elements' => array(
-							'MO.ID;' => 'mo_id',
+							'MO.ID' => 'mo_id',
 							'MO.NR' => 'mo_nr',
 							'MO.UTVID' => 'mo_utvid',
 							'MO.LUKKET' => 'mo_lukket',

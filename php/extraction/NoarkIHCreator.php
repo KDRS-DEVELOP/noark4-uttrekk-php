@@ -29,7 +29,7 @@ class NoarkIHCreator {
 		//echo "Opening file " . $outputFileName . " filename " . $this->XMLfilename . " dir(" . $this->outputDir . ")\n"; 
 		if (($fh = fopen($outputFileName, "w")) != false) {
 	
-			fwrite($fh, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<!DOCTYPE NOARK.IH SYSTEM\"NOARKIH.DTD\">\n<NOARK.IH VERSJON=\"1.0\">\n");
+			fwrite($fh, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<!DOCTYPE NOARK.IH SYSTEM \"NOARKIH.DTD\">\n<NOARK.IH VERSJON=\"1.0\">\n");
 	
 			fwrite($fh, "\t<EKSPORTINFO>\n");
 			

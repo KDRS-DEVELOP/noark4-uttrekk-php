@@ -37,8 +37,10 @@ class AdminDelDAO extends Noark4Base {
 						$adminDel->AI_TYPE = $result['TYPE'];
 						$adminDel->AI_IDFAR = $result['EIER'];			
 						$adminDel->AI_ADMKORT = $result['FULLKODE'];
+
 						$adminDel->AI_FRADATO = Utility::fixDateFormat($result['DATO']);
 						$adminDel->AI_TILDATO = Utility::fixDateFormat($result['TILDATO']);
+
 					}
 					$this->writeToDestination($adminDel);
 				}

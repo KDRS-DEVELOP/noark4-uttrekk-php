@@ -24,7 +24,7 @@ class MerknadDAO extends Noark4Base {
 					$merknad->ME_JPID = $result['NOKKEL'];	
 				}
 				else {
-				 die ("Unknown REGISTER value (" . $result['REGISTER'] . ") in " . $SRC_TABLE_NAME);
+				 //die ("Unknown REGISTER value (" . $result['REGISTER'] . ") in " . $SRC_TABLE_NAME);
 				}
 
 				$merknad->ME_RNR = $result['KOMNR'];

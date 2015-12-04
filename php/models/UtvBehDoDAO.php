@@ -14,6 +14,10 @@ class UtvBehDoDAO extends Noark4Base {
 	} 
 	
 	function processUtvBehDo($utvBehDo) {
+
+
+		
+
 		$this->writeToDestination($utvBehDo);
 	}
 

@@ -10,7 +10,15 @@ class TginfoDAO extends Noark4Base {
 		parent::__construct (Constants::getXMLFilename('TGINFO'), $srcBase, $uttrekksBase, $SRC_TABLE_NAME, $logger);
 		$this->selectQuery = "select PEID, JOURENHET, ADMID, AUTAV, DATO, TILDATO, AUTOPPAV from " . $SRC_TABLE_NAME . "";
 	} 
-	
+
+/*
+
+
+(TJ.PEID , TJ.JENHET? , TJ.ADMID , TJ.AUTAV , TJ.FRADATO , TJ.TILDATO? , TJ.AUTOPPAV?), got 
+(TJ.PEID TJ.JENHET TJ.ADMID TJ.AUTAV )
+
+
+*/
 
 	function processTable () {
 	
@@ -22,9 +30,9 @@ class TginfoDAO extends Noark4Base {
 				$tgInfo->TJ_JENHET = $result['JOURENHET'];
 
 				
-				if (is_null($result['ADMID'])) {
+				if (isset($result['ADMID']) == false) {
 					$tgInfo->TJ_ADMID = '0';
-					$this->logger->log($this->XMLfilename, "Assuming NULL value for ADMID represents 0 ", Constants::LOG_WARNING);
+					$this->logger->log($this->XMLfilename, "For TJ_PEID (" . $result['PEID'] . ") assuming NULL value for ADMID represents 0 ", Constants::LOG_WARNING);
 					$this->warningIssued = true;
 				}
 				else {
@@ -32,8 +40,16 @@ class TginfoDAO extends Noark4Base {
 				}
 					
 				$tgInfo->TJ_AUTAV = $result['AUTAV'];
-				$tgInfo->TJ_FRADATO = $result['DATO'];
-				$tgInfo->TJ_TILDATO = $result['TILDATO'];
+
+				if (isset($result['DATO']) == true) {
+					$tgInfo->TJ_FRADATO = Utility::fixDateFormat($result['DATO']);
+				} else {
+
+					$tgInfo->TJ_FRADATO = "19981201";
+					$this->logger->log($this->XMLfilename, "For TJ_PEID (" . $result['PEID'] . ") assuming missing value TJ_FRADATO is 19981201", Constants::LOG_WARNING);
+					$this->warningIssued = true;
+				}
+				$tgInfo->TJ_TILDATO = Utility::fixDateFormat($result['TILDATO']);
 				$tgInfo->TJ_AUTOPPAV = $result['AUTOPPAV'];
 
 				$this->writeToDestination($tgInfo);
